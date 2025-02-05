@@ -1,0 +1,16 @@
+{
+  "name": "css_frameworks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./css/input.css -o ./css/output.css --watch",
+    "build": "npx tailwindcss -i ./css/input.css -o ./css/style.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
