@@ -11,7 +11,7 @@ const posts = [
       "🚀🔥 Just deployed my React app, and tell me why CSS Flexbox is STILL gaslighting me?? 💀 Like, I deadass set justify-content: center, but my divs out here playing musical chairs. 😭 I refresh, and boom—everything’s vibing in Narnia. Someone PLEASE drop a W fix before I start full-on beefing with VS Code. Fr, at this point, I need a therapist for my CSS. 🫠",
     likes: 234,
     comments: 45,
-    image: "/api/placeholder/400/300",
+    image: "../api/images/posts/post1.png",
   },
   {
     id: 2,
