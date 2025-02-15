@@ -86,10 +86,10 @@ function renderPosts() {
           </div>
           <div class="flex-1 flex flex-col">
               <div class="p-6">
-                  <h3 class="font-semibold text-xl mb-2">${post.title}</h3>
+                  <h3 class="text-xl font-bold text-gray-800">${post.title}</h3>
                   <p class="text-sm text-gray-500 mb-4">By ${post.author}</p>
                   <div class="prose max-w-none">
-                      <p class="text-gray-600 whitespace-pre-line">${post.content}</p>
+                      <p class="text-gray-700 whitespace-pre-line">${post.content}</p>
                   </div>
               </div>
               <div class="p-6 border-t mt-auto">
@@ -129,7 +129,7 @@ function renderPosts() {
   // Reinitialize Feather icons
   feather.replace();
 
-  // Add click event listeners to buttons
+  // FOR FUTURE REFERENCE Add click event listeners to buttons
   const buttons = container.querySelectorAll("button");
   buttons.forEach((button) => {
     button.addEventListener("click", (e) => {
@@ -142,8 +142,3 @@ function renderPosts() {
 document.addEventListener("DOMContentLoaded", () => {
   renderPosts();
 });
-
-export { renderPosts };
-
-// Initial render
-renderPosts();
