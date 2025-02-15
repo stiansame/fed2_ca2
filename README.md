@@ -1,6 +1,6 @@
 # NOROFF FED2 CA1 CSS FRAMEWORKS
 
-![image](https://github.com/stiansame/portfolio1/blob/main/assets/images/portfolio.jpg?raw=true)
+![image](https://github.com/stiansame/fed2_ca1/blob/css_frameworks/gitImg.jpg?raw=true)
 
 ## Goal
 
