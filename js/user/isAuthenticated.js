@@ -14,7 +14,7 @@
  */
 function isAuthenticated() {
   // Retrieve token from localStorage
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
 
   // If no token exists, user is not authenticated
   if (!token) {
@@ -35,7 +35,7 @@ function isAuthenticated() {
     // If token has expired, user is not authenticated
     if (payload.exp && payload.exp < currentTime) {
       // Clear invalid token
-      localStorage.removeItem("token");
+      localStorage.removeItem("accessToken");
       return false;
     }
 
@@ -44,7 +44,7 @@ function isAuthenticated() {
   } catch (error) {
     // If token parsing fails, it's invalid
     console.error("Invalid token format:", error);
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
     return false;
   }
 }
