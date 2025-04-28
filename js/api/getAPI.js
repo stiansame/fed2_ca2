@@ -76,7 +76,7 @@ export async function apiGet(endpoint, params = {}, requiresAuth = true) {
         error.message.includes("401"))
     ) {
       // Potentially redirect to login page or show auth error
-      window.location.href = "/login/";
+      window.location.href = "../../";
     }
 
     // Re-throw the error for handling by the calling function
