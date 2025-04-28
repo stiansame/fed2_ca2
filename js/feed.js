@@ -12,6 +12,7 @@ async function fetchAndRenderPosts() {
     const response = await apiGet("/social/posts", {
       limit: 10,
       offset: 0,
+      _author: true,
       sort: "created",
       sortOrder: "desc",
     });
