@@ -1,4 +1,4 @@
-import { apiGet } from "./api/getAPI.js";
+import { apiGet } from "../api/getAPI.js";
 
 // Initialize Feather icons
 feather.replace();

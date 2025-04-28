@@ -1,5 +1,5 @@
 // Import posts data
-import { posts } from "./feed_old.js";
+import { posts } from "./decrapated/feed_old.js";
 
 // Initialize Feather icons
 feather.replace();
