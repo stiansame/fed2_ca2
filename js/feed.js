@@ -40,7 +40,7 @@ function renderPosts() {
         <div class="flex flex-col md:flex-row">
           <div class="w-full md:w-72 md:flex-shrink-0">
             <img 
-              src="${post.media.url || "/fallback.jpg"}" 
+              src="${post.media?.url || "../api/images/posts/fallback.jpg"}" 
               alt="${post.title || "Post Image"}"
               loading="lazy"
               class="w-full h-48 md:h-full object-cover">
