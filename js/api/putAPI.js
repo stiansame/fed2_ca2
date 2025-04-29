@@ -2,24 +2,16 @@ import { API_BASE } from "./apiEndpoints.js";
 import { getFromLocalStorage } from "../user/localStorage.js";
 import { socialKey } from "./apiKeys.js";
 
-export async function apiGet(endpoint, params = {}) {
+export async function apiPut(endpoint, body = {}) {
   try {
     //construct full URL
     const url = new URL(API_BASE + endpoint);
-
-    //Add query parameters
-    Object.keys(params).forEach((key) => {
-      if (params[key] !== undefined && params[key] !== null) {
-        url.searchParams.append(key, params[key]);
-      }
-    });
 
     //check for/get accessToken from LocalStorage
     const token = getFromLocalStorage("accessToken");
     if (!token) {
       throw new Error("Authentication required but no token found");
     }
-
     //Define Headers
     const headers = {
       "Content-Type": "application/json",
@@ -29,8 +21,9 @@ export async function apiGet(endpoint, params = {}) {
 
     //make fetch request
     const response = await fetch(url, {
-      method: "GET",
+      method: "PUT",
       headers,
+      body: JSON.stringify(body),
     });
 
     //basic error handling
@@ -47,6 +40,7 @@ export async function apiGet(endpoint, params = {}) {
     }
 
     return await response.json();
+    console.log(response);
   } catch (error) {
     console.error("API Request Error:", error);
     throw error;

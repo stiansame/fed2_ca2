@@ -3,6 +3,7 @@ import { PROFILES } from "../api/apiEndpoints.js";
 import { getFromLocalStorage } from "../user/localStorage.js";
 import { createModal } from "../utility/createModal.js";
 import { renderProfileModal } from "./renderProfileModal.js";
+import { profileUpdater } from "./updateProfile.js";
 
 // Get the logged-in user data
 const loggedInUser = getFromLocalStorage("profile");
@@ -47,6 +48,7 @@ async function fetchSingleProfile() {
     // Render the profile with the fetched data
     renderProfile(profileData);
     document.getElementById("profileModal").innerHTML = renderProfileModal();
+    profileUpdater();
 
     // Show or hide edit button (only show for own profile)
     toggleEditButton(profileData.name === loggedInUser.name);

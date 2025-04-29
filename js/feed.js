@@ -18,7 +18,6 @@ async function fetchAndRenderPosts() {
     });
 
     postData = response.data; // Now it's an array!
-    console.log(postData);
 
     renderPosts();
   } catch (error) {
