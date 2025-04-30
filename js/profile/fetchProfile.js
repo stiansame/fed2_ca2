@@ -48,6 +48,11 @@ async function fetchSingleProfile() {
     // Render the profile with the fetched data
     renderProfile(profileData);
     document.getElementById("profileModal").innerHTML = renderProfileModal();
+    createModal({
+      openButtonId: "openProfileModalBtn",
+      modalId: "profileModal",
+      closeButtonId: "closeProfileModal",
+    });
     profileUpdater();
 
     // Show or hide edit button (only show for own profile)
@@ -231,9 +236,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Export functions for testing/reuse
 export { fetchSingleProfile, renderProfile, renderPosts };
-
-createModal({
-  openButtonId: "openProfileModalBtn",
-  modalId: "profileModal",
-  closeButtonId: "closeProfileModal",
-});

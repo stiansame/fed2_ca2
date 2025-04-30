@@ -37,8 +37,9 @@ export function createModal({ openButtonId, modalId, closeButtonId }) {
 }
 
 // Example usage
-createModal({
+/* createModal({
   openButtonId: "openProfileModalBtn",
   modalId: "profileModal",
   closeButtonId: "closeProfileModal",
 });
+ */

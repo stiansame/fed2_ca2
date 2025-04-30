@@ -32,6 +32,8 @@ export function renderProfileModal() {
     } = {},
   } = userData;
 
+  console.log("proflieModal injected");
+
   // Return the profile modal HTML
   return `
     <!-- Update Profile Modal -->
@@ -86,6 +88,11 @@ export function renderProfileModal() {
         </div>
     </div>
   `;
+  createModal({
+    openButtonId: "openProfileModalBtn",
+    modalId: "profileModal",
+    closeButtonId: "closeProfileModal",
+  });
 }
 
 // Example usage:
