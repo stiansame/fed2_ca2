@@ -44,7 +44,7 @@ export function profileUpdater(onSuccess) {
       const profile = getFromLocalStorage("profile") || {};
       profile.bio = newBio;
       saveToLocalStorage("profile", profile);
-
+      //display message
       alertEl.textContent = "Profile updated successfully.";
       alertEl.classList.add(
         "bg-green-100",
@@ -53,6 +53,7 @@ export function profileUpdater(onSuccess) {
         "border-green-300"
       );
     } catch (error) {
+      //display message
       alertEl.textContent = error.message || "Update failed.";
       alertEl.classList.add(
         "bg-red-100",
@@ -62,13 +63,12 @@ export function profileUpdater(onSuccess) {
       );
     }
 
-    // Remove alert after 1 second
+    //remove message and close modal
     setTimeout(() => {
       alertEl.remove();
-    }, 1000);
-
-    const modal = document.getElementById("profileModal");
-    modal.classList.add("hidden");
-    window.location.reload(true);
+      const modal = document.getElementById("profileModal");
+      modal.classList.add("hidden");
+      window.location.reload(true);
+    }, 1500);
   });
 }

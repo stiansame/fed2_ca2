@@ -2,7 +2,7 @@ import { API_BASE } from "./apiEndpoints.js";
 import { getFromLocalStorage } from "../user/localStorage.js";
 import { socialKey } from "./apiKeys.js";
 
-export async function apiPut(endpoint, body = {}) {
+export async function apiPost(endpoint, body = {}) {
   try {
     //construct full URL
     const url = new URL(API_BASE + endpoint);
@@ -19,13 +19,13 @@ export async function apiPut(endpoint, body = {}) {
       "x-noroff-api-key": socialKey,
     };
 
-    //make fetch request
+    //make post request
     const response = await fetch(url, {
-      method: "PUT",
+      method: "POST",
       headers,
       body: JSON.stringify(body),
     });
-
+    console.log(response);
     //basic error handling
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
@@ -40,7 +40,6 @@ export async function apiPut(endpoint, body = {}) {
     }
 
     return await response.json();
-    console.log(response);
   } catch (error) {
     console.error("API Request Error:", error);
     throw error;

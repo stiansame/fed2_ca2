@@ -25,6 +25,7 @@ export async function apiPut(endpoint, body = {}) {
       headers,
       body: JSON.stringify(body),
     });
+    console.log(response);
 
     //basic error handling
     if (!response.ok) {
@@ -40,7 +41,6 @@ export async function apiPut(endpoint, body = {}) {
     }
 
     return await response.json();
-    console.log(response);
   } catch (error) {
     console.error("API Request Error:", error);
     throw error;

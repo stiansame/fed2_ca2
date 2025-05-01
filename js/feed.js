@@ -1,4 +1,12 @@
 import { apiGet } from "./api/getAPI.js";
+import { createModal } from "./utility/modalHandler.js";
+import { newPost } from "./posts/newPost.js";
+import { updateCount } from "./utility/textCounter.js";
+
+//add eventlistener for characterCounter
+window.addEventListener("DOMContentLoaded", () => {
+  updateCount("content", "charCount");
+});
 
 // Initialize Feather icons
 feather.replace();
@@ -11,7 +19,7 @@ async function fetchAndRenderPosts() {
   try {
     const response = await apiGet("/social/posts", {
       limit: 10,
-      offset: 0,
+      page: 1,
       _author: true,
       sort: "created",
       sortOrder: "desc",
@@ -20,10 +28,31 @@ async function fetchAndRenderPosts() {
     postData = response.data; // Now it's an array!
 
     renderPosts();
+    newPost();
   } catch (error) {
     console.error("Failed to fetch posts:", error);
   }
 }
+
+createModal({
+  openButtonId: "newPostBtn",
+  modalId: "modal",
+  closeButtonId: "closeModal",
+  formId: "newPostForm",
+  image: {
+    inputId: "imageUrlInput",
+    previewId: "imagePreview",
+  },
+  onSubmit: ({ imageUrl, form }) => {
+    const title = form.querySelector("#title").value;
+    const content = form.querySelector("#content").value;
+    const tags = Array.from(form.querySelector("#tags").value.split(","))
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+
+    /*     savePost({ title, content, imageUrl, tags }); */
+  },
+});
 
 // Render posts
 function renderPosts() {
@@ -97,7 +126,7 @@ function renderPosts() {
   });
 }
 
-// ✅ Wait for DOM to load, THEN fetch posts
+// Wait for DOM to load, THEN fetch posts
 document.addEventListener("DOMContentLoaded", () => {
   fetchAndRenderPosts();
 });
