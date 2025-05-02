@@ -2,6 +2,7 @@ import { apiGet } from "./api/getAPI.js";
 import { createModal } from "./utility/modalHandler.js";
 import { newPost } from "./posts/newPost.js";
 import { updateCount } from "./utility/textCounter.js";
+import { truncateTextAtWordBoundary } from "./utility/textTruncater.js";
 
 //add eventlistener for characterCounter
 window.addEventListener("DOMContentLoaded", () => {
@@ -18,7 +19,7 @@ let postData = [];
 async function fetchAndRenderPosts() {
   try {
     const response = await apiGet("/social/posts", {
-      limit: 10,
+      limit: 20,
       page: 1,
       _author: true,
       sort: "created",
@@ -26,6 +27,7 @@ async function fetchAndRenderPosts() {
     });
 
     postData = response.data; // Now it's an array!
+    const trimmedBody = postData.body;
 
     renderPosts();
     newPost();
@@ -64,7 +66,7 @@ function renderPosts() {
     .map(
       (post, index) => `
       <!-- Single Post container -->
-      <div class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden ${
+      <div class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden transform duration-300 hover:scale-103 hover:rotate-1 ${
         index < postData.length - 1 ? "mb-8" : ""
       }">
         <div class="flex flex-col md:flex-row">
@@ -90,8 +92,9 @@ function renderPosts() {
 
               <!-- Single Post body container -->
               <div class="prose max-w-none">
-                <p class="text-gray-700 whitespace-pre-line">${
-                  post.body || ""
+                <p class="text-gray-700 whitespace-pre-line" style="white-space: normal;">${
+                  truncateTextAtWordBoundary(post.body, 100) ||
+                  "Post has no text..."
                 }</p>
               </div>
             </div>
