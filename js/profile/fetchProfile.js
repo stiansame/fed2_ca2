@@ -133,45 +133,69 @@ function toggleEditButton(isOwnProfile) {
 function renderPosts(posts) {
   postsContainer.innerHTML = ""; // Clear existing posts
 
+  // Create a grid container with responsive columns
+  postsContainer.className =
+    "grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+
   posts.forEach((post) => {
     const postElement = document.createElement("div");
-    postElement.className = "bg-white rounded-lg shadow-md p-4 mb-4";
+    postElement.className =
+      "bg-white p-4 rounded-lg shadow-lg transform transition duration-300 hover:scale-103 hover:rotate-1";
 
     // Create post content
     postElement.innerHTML = `
-            <div class="flex items-start">
-                <div class="flex-1">
-                    <div class="flex items-center mb-2">
-                        <h3 class="font-bold text-gray-800">${
-                          post.title || "Untitled Post"
-                        }</h3>
-                    </div>
-                    <p class="text-gray-700 mb-3">${
-                      post.body || "No content"
-                    }</p>
-                    
-                    ${
-                      post.media
-                        ? `
-                        <div class="mb-3">
-                            <img src="${post.media}" alt="Post media" class="w-full rounded-lg">
-                        </div>
-                    `
-                        : ""
-                    }
-                    
-                    <div class="flex items-center text-gray-500 text-sm">
-                        <span class="flex items-center mr-4">
-                            <i data-feather="heart" class="h-4 w-4 mr-1"></i>
-                            ${post._count?.reactions || 0}
-                        </span>
-                        <span class="flex items-center">
-                            <i data-feather="message-square" class="h-4 w-4 mr-1"></i>
-                            ${post._count?.comments || 0}
-                        </span>
-                    </div>
-                </div>
-            </div>
+      <div class="flex flex-col space-y-4 h-full">
+          <!-- Post Title -->
+          <h3 class="text-xl font-bold text-gray-800">${post.title}</h3>
+          
+          <!-- Post Image -->
+          <img src="${post.media.url}" alt="${
+      post.media.alt
+    }" class="rounded-lg w-full object-cover">
+          
+          <!-- Post Content -->
+          <p class="text-gray-700 whitespace-pre-line flex-1">${
+            post.body || "No content!"
+          }</p>
+          
+	<!-- Post Tags -->
+<div class="flex flex-wrap gap-2">
+  ${
+    post.tags
+      ?.map(
+        (tag) => `
+    <a href="/tags/${encodeURIComponent(tag)}" 
+       class="bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full hover:bg-gray-300 transition-colors">
+      #${tag}
+    </a>
+  `
+      )
+      .join("") || ""
+  }
+</div>
+          
+          <!-- Post Interactions -->
+          <div class="flex justify-between items-center mt-auto">
+                      <div class="flex gap-4">
+                          <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
+                              <i data-feather="heart" class="h-4 w-4"></i>
+                              ${post._counts?.reactions || 0}
+                          </button>
+                          <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
+                              <i data-feather="message-circle" class="h-4 w-4"></i>
+                              ${post._count?.comments || 0}
+                          </button>
+                      </div>
+                      <div class="flex gap-2">
+                          <button class="text-gray-600 hover:text-gray-800">
+                              <i data-feather="share-2" class="h-4 w-4"></i>
+                          </button>
+                          <button class="text-gray-600 hover:text-gray-800">
+                              <i data-feather="bookmark" class="h-4 w-4"></i>
+                          </button>
+                      </div>
+                  </div>
+      </div>
         `;
 
     postsContainer.appendChild(postElement);
@@ -199,7 +223,8 @@ function renderNoPosts() {
  */
 function renderErrorState() {
   // Update profile section with error
-  profileName.textContent = "Error loading profile";
+  profileName.textContent =
+    "Error loading profile - make sure you are logged in!";
 
   // Hide edit button in error state
   if (editButton) {
@@ -209,9 +234,14 @@ function renderErrorState() {
   // Display error message in posts section
   postsContainer.innerHTML = `
         <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <p class="text-red-500">Failed to load profile data. Please try again later.</p>
+            <p class="text-red-500">Failed to load profile data. Make sure you are logged in.</p>
         </div>
     `;
+
+  // return user to login page
+  setTimeout(() => {
+    window.location.href = "../../";
+  }, 2000);
 }
 
 /**

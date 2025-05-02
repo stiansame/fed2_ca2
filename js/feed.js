@@ -31,6 +31,7 @@ async function fetchAndRenderPosts() {
     newPost();
   } catch (error) {
     console.error("Failed to fetch posts:", error);
+    renderErrorState();
   }
 }
 
@@ -62,10 +63,13 @@ function renderPosts() {
   container.innerHTML = postData
     .map(
       (post, index) => `
+      <!-- Single Post container -->
       <div class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden ${
         index < postData.length - 1 ? "mb-8" : ""
       }">
         <div class="flex flex-col md:flex-row">
+
+        <!-- Single Post image container -->
           <div class="w-full md:w-72 md:flex-shrink-0">
             <img 
               src="${post.media?.url || "../api/images/posts/fallback.jpg"}" 
@@ -73,6 +77,8 @@ function renderPosts() {
               loading="lazy"
               class="w-full h-48 md:h-full object-cover">
           </div>
+
+          <!-- Single Post content container -->
           <div class="flex-1 flex flex-col">
             <div class="p-6">
               <h3 class="text-xl font-bold text-gray-800">${
@@ -81,13 +87,32 @@ function renderPosts() {
               <p class="text-sm text-gray-500 mb-4">By ${
                 post.author?.name || "Unknown"
               }</p>
+
+              <!-- Single Post body container -->
               <div class="prose max-w-none">
                 <p class="text-gray-700 whitespace-pre-line">${
                   post.body || ""
                 }</p>
               </div>
             </div>
-            <div class="p-6 border-t mt-auto">
+
+<!-- Post Tags Container -->
+<div class="p-4">
+<div class="flex flex-wrap gap-2">
+  ${
+    post.tags
+      ?.map(
+        (tag) => `
+    <a href="/tags/${encodeURIComponent(tag)}" 
+       class="bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full hover:bg-gray-300 transition-colors">#${tag}</a>`
+      )
+      .join("") || ""
+  }
+</div>
+
+</div>
+
+            <div class="p-4 border-t mt-auto">
               <div class="flex justify-between items-center">
                 <div class="flex gap-4">
                   <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
@@ -130,3 +155,20 @@ function renderPosts() {
 document.addEventListener("DOMContentLoaded", () => {
   fetchAndRenderPosts();
 });
+
+/**
+ * Renders an error state when profile fetching fails
+ */
+function renderErrorState() {
+  // Display error message in posts section
+  postsContainer.innerHTML = `
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <p class="text-red-500">Failed to load posts. Make sure you are logged in.</p>
+        </div>
+    `;
+
+  // return user to login page
+  setTimeout(() => {
+    window.location.href = "../../";
+  }, 2000);
+}
