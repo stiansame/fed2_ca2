@@ -4,6 +4,7 @@ import { getFromLocalStorage } from "../user/localStorage.js";
 import { createModal } from "../utility/createModal.js";
 import { renderProfileModal } from "./renderProfileModal.js";
 import { profileUpdater } from "./updateProfile.js";
+import { truncateTextAtWordBoundary } from "../utility/textTruncater.js";
 
 // Get the logged-in user data
 const loggedInUser = getFromLocalStorage("profile");
@@ -155,7 +156,7 @@ function renderPosts(posts) {
           
           <!-- Post Content -->
           <p class="text-gray-700 whitespace-pre-line flex-1">${
-            post.body || "No content!"
+            truncateTextAtWordBoundary(post.body) || "No content!"
           }</p>
           
 	<!-- Post Tags -->
