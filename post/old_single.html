@@ -91,7 +91,7 @@
                         <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8 transform duration-300 hover:shadow-lg">
                             <!-- Post image -->
                             <div class="w-full">
-                                <img id="postImage" src="/api/images/posts/fallback.jpg" alt="Post image" class="w-full h-auto object-cover">
+                                <img id="postImage" src="/api/placeholder/800/400" alt="Post image" class="w-full h-auto object-cover">
                             </div>
 
                             <!-- Post content section -->
@@ -136,20 +136,34 @@
                                     </div>
                                 </div>
 
-
                                 <!-- Post stats and actions -->
-                                <div class="p-4 border-t mt-auto">
-                                    <div class="flex justify-between items-center">
-                                        <div class="flex gap-4">
-                                            <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                                                <i data-feather="heart" class="h-4 w-4"></i>
-                                            </button>
-                                            <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                                                <i data-feather="message-circle" class="h-4 w-4"></i>
-                                            </button>
-                                        </div>
+                                <div class="flex items-center justify-between pb-4 border-b">
+                                    <div class="flex items-center space-x-4">
+                                        <button class="flex items-center text-gray-600 hover:text-gray-800">
+                                            <i data-feather="heart" class="h-4 w-4 mr-1"></i>
+                                            <span id="likeCount">0</span> Likes
+                                        </button>
+                                        <button class="flex items-center text-gray-600 hover:text-gray-800">
+                                            <i data-feather="message-square" class="h-4 w-4 mr-1"></i>
+                                            <span id="commentCount">0</span> Comments
+                                        </button>
+                                    </div>
+
+                                    <div class="flex space-x-2">
+                                        <button id="sidebarLikeButton" class="px-3 py-1 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50 flex items-center gap-1">
+                                            <i data-feather="heart" class="h-3 w-3"></i>
+                                            <span>Like</span>
+                                        </button>
+                                        <button id="sidebarCommentButton" class="px-3 py-1 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50 flex items-center gap-1">
+                                            <i data-feather="message-square" class="h-3 w-3"></i>
+                                            <span>Comment</span>
+                                        </button>
+                                        <button id="sidebarShareButton" class="px-3 py-1 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50 flex items-center gap-1">
+                                            <i data-feather="share-2" class="h-3 w-3"></i>
+                                            <span>Share</span>
+                                        </button>
                                         <!-- Edit button - only visible for post owner -->
-                                        <button id="sidebarEditButton" class="px-3 py-1 bg-blue-700 text-white rounded-md hover:bg-blue-900 flex items-center gap-1">
+                                        <button id="sidebarEditButton" class="hidden px-3 py-1 bg-blue-700 text-white rounded-md hover:bg-blue-900 flex items-center gap-1">
                                             <i data-feather="edit-2" class="h-3 w-3"></i>
                                             <span>Edit</span>
                                         </button>

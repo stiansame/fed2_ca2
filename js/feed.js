@@ -70,7 +70,7 @@ function renderPosts() {
           class="post-card grid bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden transform duration-300 hover:scale-103 hover:rotate-1 cursor-pointer ${
             index < postData.length - 1 ? "mb-8" : ""
           } md:grid-cols-2"
-          data-url="/post/singlepost.html?id=${post.id}"
+          data-url="/post/single.html?id=${post.id}"
         >
 
           <!-- Image Wrapper (Force 4:3 aspect ratio) -->
