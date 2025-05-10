@@ -3,6 +3,7 @@ import { createModal } from "./utility/modalHandler.js";
 import { newPost } from "./posts/newPost.js";
 import { updateCount } from "./utility/textCounter.js";
 import { truncateTextAtWordBoundary } from "./utility/textTruncater.js";
+import { isReacted } from "./utility/handlers/postHandlers.js";
 
 //add eventlistener for characterCounter
 window.addEventListener("DOMContentLoaded", () => {
@@ -19,7 +20,7 @@ let postData = [];
 async function fetchAndRenderPosts() {
   try {
     const response = await apiGet("/social/posts", {
-      limit: 20,
+      limit: 40,
       page: 1,
       _author: true,
       sort: "created",
@@ -27,7 +28,6 @@ async function fetchAndRenderPosts() {
     });
 
     postData = response.data; // Now it's an array!
-    console.log(postData);
 
     renderPosts();
     newPost();
@@ -66,6 +66,7 @@ function renderPosts() {
   ${postData
     .map(
       (post, index) => `
+      <!-- post here -->
         <div 
           class="post-card grid bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden transform duration-300 hover:scale-103 hover:rotate-1 cursor-pointer ${
             index < postData.length - 1 ? "mb-8" : ""
