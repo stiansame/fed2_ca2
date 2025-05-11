@@ -1,10 +1,16 @@
-import { fetchPost, fetchProfileData, fetchComments } from "./apiService.js";
+import {
+  fetchPost,
+  fetchProfileData,
+  fetchComments,
+  updatePost,
+} from "./apiService.js";
 import { createPostCard } from "./postRenderer.js";
 import { renderComments } from "../comments/commentRenderer.js";
 import { getUrlParam } from "../utility/urlHandler.js";
 import { displayNotification } from "../utility/displayUserNotifications.js";
 import { addPostEventListeners } from "../utility/eventListeners.js";
 import { isReacted } from "../utility/handlers/postHandlers.js";
+import { createModal } from "../utility/createModal.js";
 
 // Global state
 let postData = null;
@@ -44,6 +50,13 @@ async function initPage() {
     container.innerHTML = "";
     const card = createPostCard(postData, followerCount);
     container.appendChild(card);
+    createModal({
+      openButtonId: "editPostBtn",
+      modalId: "editModal",
+      closeButtonId: "closeEditModal",
+      formId: "editPostForm",
+      onSubmit: () => updatePost(postId),
+    });
 
     // Re-initialize Feather icons after adding the card to the DOM
     feather.replace();
@@ -66,7 +79,16 @@ async function initPage() {
 }
 
 // Initialize on DOMContentLoaded
-document.addEventListener("DOMContentLoaded", initPage);
+document.addEventListener(
+  "DOMContentLoaded",
+  initPage,
+  createModal({
+    openButtonId: "newPostBtn",
+    modalId: "newPostModal",
+    closeButtonId: "closeModal",
+    formId: "newPostForm",
+  })
+);
 
 // Export functions that might be needed elsewhere
 export { initPage };

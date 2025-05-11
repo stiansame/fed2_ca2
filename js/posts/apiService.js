@@ -1,5 +1,6 @@
 import { apiGet } from "../api/getAPI.js";
 import { PROFILES } from "../api/apiEndpoints.js";
+import { apiPut } from "../api/putAPI.js";
 
 /**
  * Fetches post data by ID
@@ -61,6 +62,37 @@ export async function fetchComments(postId) {
     return sortedComments;
   } catch (error) {
     console.error("Failed to fetch comments:", error);
+    throw error;
+  }
+}
+
+export async function updatePost(postID) {
+  const updateBtn = document.getElementById("updatePostBtn");
+  const updateForm = document.getElementById("editPostForm");
+
+  if (!updateBtn || !updateForm) return;
+
+  //get fields to update
+  const titleInput = document.getElementById("editTitle");
+  const contentInput = document.getElementById("editContent");
+  const tagsInput = document.getElementById("editTags");
+  const postImgUrlInput = document.getElementById("editPostImageUrl");
+
+  try {
+    const updatedPost = {
+      title: titleInput.value,
+      body: contentInput.value,
+      tags: tagsInput.value.split(",").map((tag) => tag.trim()), // assuming comma-separated
+      media: {
+        url: postImgUrlInput.value,
+      },
+    };
+
+    console.log(updatedPost, postID);
+
+    await apiPut(`/social/posts/${postID}`, updatedPost);
+  } catch (error) {
+    console.error("There was an error:", error);
     throw error;
   }
 }
