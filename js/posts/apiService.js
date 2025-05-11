@@ -52,7 +52,13 @@ export async function fetchComments(postId) {
       sort: "created",
       sortOrder: "desc",
     });
-    return response.data.comments;
+
+    const comments = response.data.comments || [];
+    const sortedComments = comments.sort(
+      (a, b) => new Date(b.created) - new Date(a.created)
+    );
+    console.log(sortedComments);
+    return sortedComments;
   } catch (error) {
     console.error("Failed to fetch comments:", error);
     throw error;

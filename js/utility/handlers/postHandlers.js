@@ -15,7 +15,6 @@ export async function isReacted(card, postData) {
 
     // Check if the current user has reacted to the post
     const reacted = hasReacted(postData, currentUserName);
-    console.log("here it is", postData);
 
     // Get the like count from the post data
     // Assuming postData has a likeCount property

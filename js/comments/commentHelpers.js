@@ -13,8 +13,10 @@ export function createCommentElement(comment, currentUser) {
 
   div.innerHTML = `
     <div class="flex items-start space-x-3">
-      <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-        <i data-feather="user" class="h-5 w-5 text-blue-700"></i>
+      <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+        <img src="${
+          comment.author?.avatar?.url
+        }"class="h-full w-full rounded-full object-cover" />
       </div>
       <div class="flex-grow">
         <h4 class="font-medium">${comment.author?.name || "Unknown"}</h4>

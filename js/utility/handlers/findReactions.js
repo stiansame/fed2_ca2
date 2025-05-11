@@ -29,7 +29,6 @@ export function updateHeartIcon(iconElement, isLiked) {
 
   // Set data attribute to track state
   iconElement.setAttribute("data-liked", isLikedBool);
-  console.log(isLikedBool);
 
   // Update visual appearance
   const attributes = isLikedBool
