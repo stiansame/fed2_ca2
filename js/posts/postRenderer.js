@@ -32,9 +32,6 @@ export function createPostCard(postData, followerCount) {
     _count = {},
   } = postData;
 
-  //here it is
-  console.log(postData);
-
   postToEditModal(postData);
 
   const imageUrl = media?.url || "/api/images/posts/fallback.jpg";
