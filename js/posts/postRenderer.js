@@ -1,5 +1,6 @@
 import { displayNotification } from "../utility/displayUserNotifications.js";
 import { addPostEventListeners } from "../utility/eventListeners.js";
+import { fetchProfileData } from "./apiService.js";
 
 //modalElements to update
 const editModalPostTitle = document.getElementById("editTitle");
@@ -96,7 +97,7 @@ export function createPostCard(postData, followerCount) {
   const authorInfo = document.createElement("div");
 
   const authorNameEl = document.createElement("h3");
-  authorNameEl.className = "font-medium";
+  authorNameEl.className = "font-medium cursor-pointer";
   authorNameEl.textContent = authorName;
 
   const followersEl = document.createElement("div");
