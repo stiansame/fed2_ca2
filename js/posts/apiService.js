@@ -58,7 +58,6 @@ export async function fetchComments(postId) {
     const sortedComments = comments.sort(
       (a, b) => new Date(b.created) - new Date(a.created)
     );
-    console.log(sortedComments);
     return sortedComments;
   } catch (error) {
     console.error("Failed to fetch comments:", error);

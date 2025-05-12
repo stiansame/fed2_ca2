@@ -3,6 +3,7 @@ import { createModal } from "./utility/modalHandler.js";
 import { newPost } from "./posts/newPost.js";
 import { updateCount } from "./utility/textCounter.js";
 import { truncateTextAtWordBoundary } from "./utility/textTruncater.js";
+import { renderPosts } from "./posts/renderAllposts.js";
 import { isReacted } from "./utility/handlers/postHandlers.js";
 
 //add eventlistener for characterCounter
@@ -19,7 +20,7 @@ let postData = [];
 // Fetch and render
 async function fetchAndRenderPosts() {
   try {
-    const response = await apiGet("/social/posts", {
+    const response = await apiGet("/social/posts?_tag=feds", {
       limit: 40,
       page: 1,
       _author: true,
@@ -29,7 +30,10 @@ async function fetchAndRenderPosts() {
 
     postData = response.data; // Now it's an array!
 
-    renderPosts();
+    renderPosts(postData, undefined, {
+      containerLayout: "column",
+      cardLayout: "responsive",
+    });
     newPost();
   } catch (error) {
     console.error("Failed to fetch posts:", error);
@@ -58,8 +62,8 @@ createModal({
 });
 
 // Render posts
-function renderPosts() {
-  const container = document.getElementById("postsContainer");
+/* export function renderPosts() {
+  const container = document.querySelector(".postsContainer");
   if (!container) return;
 
   container.innerHTML = `
@@ -171,7 +175,7 @@ function renderPosts() {
       console.log("Button clicked", e.currentTarget);
     });
   });
-}
+} */
 
 // Wait for DOM to load, THEN fetch posts
 document.addEventListener("DOMContentLoaded", () => {
@@ -183,6 +187,10 @@ document.addEventListener("DOMContentLoaded", () => {
  */
 function renderErrorState() {
   // Display error message in posts section
+  const postsContainer = document.querySelector(".postsContainer"); // <-- add this
+
+  if (!postsContainer) return;
+
   postsContainer.innerHTML = `
         <div class="bg-white rounded-lg shadow-md p-6 text-center">
             <p class="text-red-500">Failed to load posts. Make sure you are logged in.</p>

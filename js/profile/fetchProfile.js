@@ -2,13 +2,13 @@ import { apiGet } from "../api/getAPI.js";
 import { PROFILES } from "../api/apiEndpoints.js";
 import { getFromLocalStorage } from "../user/localStorage.js";
 import { createModal } from "../utility/createModal.js";
-import { renderProfileModal } from "./renderProfileModal.js";
 import { profileUpdater } from "./updateProfile.js";
 import { truncateTextAtWordBoundary } from "../utility/textTruncater.js";
+import { renderPosts } from "../posts/renderAllposts.js";
 
 // Get the logged-in user data
 const loggedInUser = getFromLocalStorage("profile");
-const postsContainer = document.getElementById("postsContainer");
+const postsContainer = document.querySelector(".postsContainer");
 
 // Elements to update with profile data
 const profileImage = document.getElementById("profileAvatarImg");
@@ -65,7 +65,10 @@ async function fetchSingleProfile() {
 
     // Render the posts
     if (profileData.posts && profileData.posts.length > 0) {
-      renderPosts(profileData.posts);
+      renderPosts(profileData.posts, undefined, {
+        containerLayout: "grid",
+        cardLayout: "stacked",
+      });
     } else {
       renderNoPosts();
     }
@@ -149,12 +152,12 @@ function toggleEditButton(isOwnProfile) {
  * Renders posts to the post container
  * @param {Array} posts - Array of post objects
  */
-function renderPosts(posts) {
+/* function renderPosts(posts) {
   postsContainer.innerHTML = ""; // Clear existing posts
 
   // Create a grid container with responsive columns
   postsContainer.className =
-    "grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+    "grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 postsContainer";
 
   posts.forEach((post) => {
     const postElement = document.createElement("div");
@@ -224,7 +227,7 @@ function renderPosts(posts) {
   if (window.feather) {
     feather.replace();
   }
-}
+} */
 
 /**
  * Renders a message when there are no posts
