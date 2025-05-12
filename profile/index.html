@@ -47,46 +47,119 @@
     <main class="flex-1 max-w-5xl mx-auto w-full content-center">
         <div class="pt-20 px-4 sm:px-6">
             <!-- Profile Header -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6 relative">
+            <div class="bg-white rounded-lg shadow-md mb-6 relative overflow-hidden">
+                <!-- Grid structure for the entire profile -->
+                <div class="grid grid-cols-1">
+                    <!-- Profile banner -->
+                    <div class="w-full h-48">
+                        <img src="../api/images/profile/my_banner.png" alt="Profile Banner" class="w-full h-full object-cover" id="profileBannerImg">
+                    </div>
+
+                    <!-- Profile Image  -->
+                    <div class="absolute left-1/2 top-48 transform -translate-x-1/2 -translate-y-1/2">
+                        <img src="../api/images/profile/default_profile.jpg" alt="Profile" class="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-blue-700"
+                            id="profileAvatarImg">
+                    </div>
+
+                    <!-- Profile content section  -->
+                    <div class="px-4 pt-16 pb-6">
+                        <!-- Profile Info -->
+                        <div class="text-center">
+                            <h1 class="text-2xl font-bold text-gray-800 mb-2">Loading...</h1>
+
+                            <!-- Bio Row -->
+                            <div class="max-w-xl mx-auto text-center text-gray-700 mb-4">
+                                <p id="profileBio">This is a short bio about the user. It can be updated dynamically.</p>
+                            </div>
+
+                            <!-- Stats - horizontal row -->
+                            <div class="flex justify-center gap-6 mb-4">
+                                <div class="text-center">
+                                    <span class="block font-bold text-gray-800">0</span>
+                                    <span class="text-gray-600">Posts</span>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-gray-800">0</span>
+                                    <span class="text-gray-600">Followers</span>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-gray-800">0</span>
+                                    <span class="text-gray-600">Following</span>
+                                </div>
+                                <!-- Follow Button -->
+                                <button id="followProfileBtn" class="px-3 py-1 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50 flex items-center gap-1">
+                                    <i data-feather="user-plus" class="h-3 w-3"></i><span>Follow</span>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
                 <!-- Edit Profile Icon -->
                 <button id="openProfileModalBtn" class="absolute top-4 right-4 text-blue-700 hover:text-blue-900" aria-label="Edit profile">
                     <i data-feather="edit" class="h-5 w-5"></i>
                 </button>
-
-                <div class="flex flex-col sm:flex-row items-center gap-6">
-                    <!-- Profile Image - This will be updated by JS -->
-                    <img src="../api/images/profile/default_profile.jpg" alt="Profile" class="w-32 h-32 rounded-full object-cover border-4 border-blue-700">
-
-                    <!-- Profile Info -->
-                    <div class="flex-1 text-center sm:text-left">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-2">Loading...</h1>
-
-                        <!-- Stats -->
-                        <div class="flex justify-center sm:justify-start gap-6 mb-4">
-                            <div class="text-center">
-                                <span class="block font-bold text-gray-800">0</span>
-                                <span class="text-gray-600">Posts</span>
-                            </div>
-                            <div class="text-center">
-                                <span class="block font-bold text-gray-800">0</span>
-                                <span class="text-gray-600">Followers</span>
-                            </div>
-                            <div class="text-center">
-                                <span class="block font-bold text-gray-800">0</span>
-                                <span class="text-gray-600">Following</span>
-                            </div>
-                        </div>
-
-                        <!-- Follow Button -->
-                        <button class="px-6 py-2 rounded-full font-semibold bg-blue-700 text-white hover:bg-blue-900">
-                            Follow
-                        </button>
-                    </div>
-                </div>
             </div>
-
             <!-- Update Profile Modal -->
             <div id="profileModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+
+                <div class="bg-white rounded-lg w-full max-w-lg mx-4">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold">Update Profile</h2>
+                            <button id="closeProfileModal" class="text-gray-500 hover:text-gray-700">
+                                <i data-feather="x" class="h-6 w-6"></i>
+                            </button>
+                        </div>
+                        <form id="updateProfileForm" class="space-y-4">
+
+                            <!-- Current Avatar -->
+                            <div class="flex flex-col items-center space-y-2">
+                                <img id="currentAvatar" src="../api/images/profile/default_profile.jpg" alt="" class="h-24 w-24 rounded-full border-2 border-blue-700 object-cover">
+                            </div>
+
+                            <!-- Editable Avatar URLS -->
+                            <div>
+                                <label for="avatarUrl" class="sr-only">Avatar</label>
+                                <textarea id="avatarUrl" placeholder="Update avatar URL"
+                                    class="w-full px-3 py-2 border rounded-md text-xs resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <div>
+                                <label for="bannerUrl" class="sr-only">Banner</label>
+                                <textarea id="bannerUrl" placeholder="Update banner URL"
+                                    class="w-full px-3 py-2 border rounded-md text-xs resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <!-- Name (not editable) -->
+                            <div>
+                                <label for="name" class="sr-only">Name</label>
+                                <input type="text" id="name" value="" class="w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500 cursor-not-allowed" readonly>
+                            </div>
+
+                            <!-- Email (not editable) -->
+                            <div>
+                                <label for="email" class="sr-only">Email</label>
+                                <input type="email" id="email" value="" class="w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500 cursor-not-allowed" readonly>
+                            </div>
+
+                            <!-- Editable Bio -->
+                            <div>
+                                <label for="bio" class="sr-only">Bio</label>
+                                <textarea id="bio" placeholder="Write something about yourself..."
+                                    class="w-full h-32 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <!-- Save Changes Button -->
+                            <button type="submit" class="w-full px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-900">
+                                Save Changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
             </div>
 
@@ -106,7 +179,7 @@
     <footer class="md:sticky bottom-0 w-full border-t-2 border-blue-700 bg-white z-50">
         <div class="max-w-5xl mx-auto text-right p-4">
             <p>All images generated by A.I</p>
-            <p>NOROFF FED-2 CA1 css frameworks | &#169; 2025 Stian Rostad. All rights reserved.</p>
+            <p>NOROFF FED-2 CA2 JavaScript 2 | &#169; 2025 Stian Rostad. All rights reserved.</p>
         </div>
     </footer>
 

@@ -1,6 +1,12 @@
 import { displayNotification } from "../utility/displayUserNotifications.js";
 import { addPostEventListeners } from "../utility/eventListeners.js";
 
+//modalElements to update
+const editModalPostTitle = document.getElementById("editTitle");
+const editModalPostContent = document.getElementById("editContent");
+const editModalPostTags = document.getElementById("editTags");
+const editModalPostImageUrl = document.getElementById("editPostImageUrl");
+
 /**
  * Creates a post card element from post data
  * @param {Object} postData - The post data
@@ -26,6 +32,11 @@ export function createPostCard(postData, followerCount) {
     _count = {},
   } = postData;
 
+  //here it is
+  console.log(postData);
+
+  postToEditModal(postData);
+
   const imageUrl = media?.url || "/api/images/posts/fallback.jpg";
   const imageAlt = media?.alt || "Post image";
   const authorName = author.name || "Unknown Author";
@@ -33,6 +44,7 @@ export function createPostCard(postData, followerCount) {
   const avatarAlt = author.avatar?.alt || "Author avatar";
 
   const postDate = new Date(created).toLocaleDateString();
+  document.title = `FEDS | ${title}`;
 
   // Root container
   const card = document.createElement("div");
@@ -156,10 +168,10 @@ export function createPostCard(postData, followerCount) {
   actions.appendChild(commentBtn);
 
   const editBtn = document.createElement("button");
-  editBtn.className =
-    "px-3 py-1 bg-blue-700 text-white rounded-md hover:bg-blue-900 flex items-center gap-1";
+  editBtn.className = "text-blue-700 hover:text-blue-900";
   editBtn.id = "editPostBtn";
-  editBtn.innerHTML = `<i data-feather="edit-2" class="h-3 w-3"></i><span>Edit</span>`;
+  editBtn.setAttribute("aria-label", "Edit Pofile");
+  editBtn.innerHTML = `<i data-feather="edit" class="h-6 w-6"></i>`;
 
   footer.appendChild(actions);
   footer.appendChild(editBtn);
@@ -176,4 +188,13 @@ export function createPostCard(postData, followerCount) {
   card.appendChild(contentWrapper);
 
   return card;
+}
+
+export function postToEditModal(post) {
+  editModalPostTitle.value = post.title;
+  editModalPostContent.value = post.body;
+  editModalPostTags.value = Array.isArray(post.tags)
+    ? post.tags.join(", ")
+    : "";
+  editModalPostImageUrl.value = post.media.url || "";
 }

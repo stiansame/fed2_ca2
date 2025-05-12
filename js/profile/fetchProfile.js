@@ -11,11 +11,18 @@ const loggedInUser = getFromLocalStorage("profile");
 const postsContainer = document.getElementById("postsContainer");
 
 // Elements to update with profile data
-const profileImage = document.querySelector("main img");
+const profileImage = document.getElementById("profileAvatarImg");
+const currentAvatar = document.getElementById("currentAvatar");
+const bannerUrl = document.getElementById("bannerUrl");
+const avatarUrl = document.getElementById("avatarUrl");
+const bannerImage = document.getElementById("profileBannerImg");
 const profileName = document.querySelector("main h1");
-const followButton = document.querySelector(
-  "main button.px-6.py-2.rounded-full"
-);
+const userName = document.getElementById("name");
+const userMail = document.getElementById("email");
+const userBio = document.getElementById("bio");
+const profileBio = document.getElementById("profileBio");
+
+const followButton = document.getElementById("followProfileBtn");
 const editButton = document.querySelector("button[aria-label='Edit profile']");
 const statsContainers = document.querySelectorAll(
   "main .flex.justify-center .text-center"
@@ -36,19 +43,16 @@ async function fetchSingleProfile() {
     console.log(`Fetching profile for: ${loggedInUser.name}`);
 
     const response = await apiGet(`${PROFILES}/${loggedInUser.name}`, {
-      limit: 10,
-      offset: 0,
       _following: true,
       _followers: true,
       _posts: true,
     });
 
     const profileData = response.data;
-    console.log("Profile data:", profileData);
+    console.log(profileData);
 
     // Render the profile with the fetched data
     renderProfile(profileData);
-    document.getElementById("profileModal").innerHTML = renderProfileModal();
     createModal({
       openButtonId: "openProfileModalBtn",
       modalId: "profileModal",
@@ -79,10 +83,24 @@ function renderProfile(profile) {
   // Update profile image if available
   if (profile.avatar) {
     profileImage.src = profile.avatar.url;
+    currentAvatar.src = profile.avatar.url;
+    avatarUrl.value = profile.avatar.url;
   }
 
-  // Update profile name
+  //update profile banner image if available
+  if (profile.banner) {
+    bannerImage.src = profile.banner.url;
+    bannerUrl.value = profile.banner.url;
+  }
+
+  // Update profile name and email
   profileName.textContent = profile.name || "Unknown User";
+  userName.value = profile.name;
+  userMail.value = profile.email;
+
+  //Update profile Bio
+  profileBio.textContent = profile.bio;
+  userBio.value = profile.bio;
 
   // Update stats
   if (statsContainers.length >= 3) {
@@ -102,11 +120,11 @@ function renderProfile(profile) {
 
   // Update follow button state if needed
   if (profile.isFollowing) {
-    followButton.textContent = "Unfollow";
+    followButton.textContent = "Following";
     followButton.classList.remove("bg-blue-700", "hover:bg-blue-900");
     followButton.classList.add("bg-gray-500", "hover:bg-gray-700");
   } else {
-    followButton.textContent = "Follow";
+    followButton.querySelector("span").textContent = "Follow";
   }
 
   // Add event listener to follow button

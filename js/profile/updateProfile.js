@@ -23,7 +23,10 @@ export function profileUpdater(onSuccess) {
     e.preventDefault();
 
     const bioInput = document.getElementById("bio");
-    if (!bioInput) return;
+    const avatarInput = document.getElementById("avatarUrl");
+    const bannerInput = document.getElementById("bannerUrl");
+
+    if (!bioInput || !avatarInput || !bannerInput) return;
 
     // Remove existing alert
     const oldAlert = form.querySelector(".inline-alert");
@@ -35,15 +38,26 @@ export function profileUpdater(onSuccess) {
     form.appendChild(alertEl);
 
     try {
-      const newBio = bioInput.value;
+      const updatedProfile = {
+        bio: bioInput.value,
+        avatar: {
+          url: avatarInput.value,
+        },
+        banner: {
+          url: bannerInput.value,
+        },
+      };
 
       // Update bio via API
-      await apiPut(`${PROFILES}/${userData.name}`, { bio: newBio });
+      await apiPut(`${PROFILES}/${userData.name}`, updatedProfile);
 
       // Update localStorage
       const profile = getFromLocalStorage("profile") || {};
-      profile.bio = newBio;
+      profile.bio = updatedProfile.bio;
+      profile.avatar = updatedProfile.avatar;
+      profile.banner = updatedProfile.banner;
       saveToLocalStorage("profile", profile);
+
       //display message
       alertEl.textContent = "Profile updated successfully.";
       alertEl.classList.add(
