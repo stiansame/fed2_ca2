@@ -18,7 +18,7 @@ let postData = [];
 
 //Define page, limit
 let page = 1;
-const limit = 5;
+const limit = 10;
 let isLoading = false;
 
 // Fetch and render
@@ -36,10 +36,8 @@ async function fetchAndRenderPosts() {
     });
 
     const newPosts = response.data;
-    console.log(newPosts);
 
     postData = [...postData, ...newPosts];
-    console.log("PD", postData);
 
     renderPosts(postData, undefined, {
       containerLayout: "column",

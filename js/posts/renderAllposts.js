@@ -50,15 +50,15 @@ export function renderPosts(
 
       <!-- Content -->
       <div class="flex flex-col">
-        <div class="p-6">
-          <h3 class="text-xl font-bold text-gray-800">
+        <div class="p-4">
+          <h3 class="text-lg font-semibold text-gray-800">
             ${post.title || "Untitled"}
           </h3>
-          <p class="text-sm text-gray-500 mb-4">By ${
+          <p class="text-xs text-gray-500 mb-2">By ${
             post.author?.name || "Unknown"
           }</p>
           <div class="prose max-w-none">
-            <p class="text-gray-700 whitespace-pre-line" style="white-space: normal;">
+            <p class="test-sm text-gray-700 whitespace-pre-line" style="white-space: normal;">
               ${
                 truncateTextAtWordBoundary(post.body, 100) ||
                 "Post has no text..."
@@ -75,7 +75,7 @@ export function renderPosts(
                 ?.map(
                   (tag) => `
               <a href="/tags/${encodeURIComponent(tag)}" 
-                 class="px-2 py-1 bg-gray-200 text-gray-800 text-xs rounded-full hover:bg-gray-300 transition-colors">
+                 class="px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full hover:bg-gray-300 transition-colors">
                 #${tag}
               </a>
             `

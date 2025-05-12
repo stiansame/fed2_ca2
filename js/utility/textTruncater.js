@@ -6,5 +6,5 @@ export function truncateTextAtWordBoundary(text, maxLength = 100) {
   const lastSpace = truncated.lastIndexOf(" ");
   const cleanText = truncated.slice(0, lastSpace);
 
-  return `${cleanText}...<b><em>[Click post to read more👀]</em></b>`;
+  return `${cleanText}...<br><em>[Click post to read more👀]</em>`;
 }
