@@ -55,13 +55,20 @@
                         <img src="../api/images/profile/my_banner.png" alt="Profile Banner" class="w-full h-full object-cover" id="profileBannerImg">
                     </div>
 
-                    <!-- Profile Image  -->
+                    <!-- Edit Profile Icon (moved below the banner and aligned right) -->
+                    <div class="flex justify-end mt-4 pr-4">
+                        <button id="openProfileModalBtn" class="text-blue-700 hover:text-blue-900 text-lg" aria-label="Edit profile">
+                            <i data-feather="edit" class="h-6 w-6"></i>
+                        </button>
+                    </div>
+
+                    <!-- Profile Image -->
                     <div class="absolute left-1/2 top-48 transform -translate-x-1/2 -translate-y-1/2">
                         <img src="../api/images/profile/default_profile.jpg" alt="Profile" class="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-blue-700"
                             id="profileAvatarImg">
                     </div>
 
-                    <!-- Profile content section  -->
+                    <!-- Profile content section -->
                     <div class="px-4 pt-16 pb-6">
                         <!-- Profile Info -->
                         <div class="text-center">
@@ -95,14 +102,8 @@
                         </div>
                     </div>
                 </div>
-
-
-
-                <!-- Edit Profile Icon -->
-                <button id="openProfileModalBtn" class="absolute top-4 right-4 text-blue-700 hover:text-blue-900" aria-label="Edit profile">
-                    <i data-feather="edit" class="h-5 w-5"></i>
-                </button>
             </div>
+
             <!-- Update Profile Modal -->
             <div id="profileModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 
@@ -166,8 +167,8 @@
 
             <!-- Posts Section -->
             <div class="bg-transparent p-6">
-                <h1 class="text-2xl font-bold text-white mb-4">Posts</h1>
-                <div id="postsContainer" class="space-y-4">
+                <h2 class="text-2xl font-bold text-white mb-4">Posts</h2>
+                <div class="space-y-4 postsContainer">
                     <!-- Loading state -->
                     <div class="bg-white rounded-lg shadow-md p-6 text-center">
                         <p class="text-gray-600">Loading posts...</p>

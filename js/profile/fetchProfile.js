@@ -2,13 +2,13 @@ import { apiGet } from "../api/getAPI.js";
 import { PROFILES } from "../api/apiEndpoints.js";
 import { getFromLocalStorage } from "../user/localStorage.js";
 import { createModal } from "../utility/createModal.js";
-import { renderProfileModal } from "./renderProfileModal.js";
 import { profileUpdater } from "./updateProfile.js";
-import { truncateTextAtWordBoundary } from "../utility/textTruncater.js";
+import { renderPosts } from "../posts/renderAllposts.js";
+import { checkOwnership } from "../user/userChecks.js";
 
 // Get the logged-in user data
 const loggedInUser = getFromLocalStorage("profile");
-const postsContainer = document.getElementById("postsContainer");
+const postsContainer = document.querySelector(".postsContainer");
 
 // Elements to update with profile data
 const profileImage = document.getElementById("profileAvatarImg");
@@ -49,10 +49,16 @@ async function fetchSingleProfile() {
     });
 
     const profileData = response.data;
-    console.log(profileData);
+
+    //update page name
+    document.title = `FEDS profile | ${profileData.name}`;
 
     // Render the profile with the fetched data
     renderProfile(profileData);
+
+    // Check if the current user owns the profile
+    await checkOwnership("profile", profileData);
+
     createModal({
       openButtonId: "openProfileModalBtn",
       modalId: "profileModal",
@@ -60,12 +66,12 @@ async function fetchSingleProfile() {
     });
     profileUpdater();
 
-    // Show or hide edit button (only show for own profile)
-    toggleEditButton(profileData.name === loggedInUser.name);
-
     // Render the posts
     if (profileData.posts && profileData.posts.length > 0) {
-      renderPosts(profileData.posts);
+      renderPosts(profileData.posts, undefined, {
+        containerLayout: "grid",
+        cardLayout: "stacked",
+      });
     } else {
       renderNoPosts();
     }
@@ -145,90 +151,6 @@ function toggleEditButton(isOwnProfile) {
   }
 }
 
-/**
- * Renders posts to the post container
- * @param {Array} posts - Array of post objects
- */
-function renderPosts(posts) {
-  postsContainer.innerHTML = ""; // Clear existing posts
-
-  // Create a grid container with responsive columns
-  postsContainer.className =
-    "grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
-
-  posts.forEach((post) => {
-    const postElement = document.createElement("div");
-    postElement.className =
-      "bg-white p-4 rounded-lg shadow-lg transform transition duration-300 hover:scale-103 hover:rotate-1";
-
-    // Create post content
-    postElement.innerHTML = `
-      <div class="flex flex-col space-y-4 h-full">
-          <!-- Post Title -->
-          <h3 class="text-xl font-bold text-gray-800">${post.title}</h3>
-          
-          <!-- Post Image -->
-          <img src="${post.media.url}" alt="${
-      post.media.alt
-    }" class="rounded-lg w-full object-cover">
-          
-          <!-- Post Content -->
-          <p class="text-gray-700 whitespace-pre-line flex-1">${
-            truncateTextAtWordBoundary(post.body) || "No content!"
-          }</p>
-          
-	<!-- Post Tags -->
-<div class="flex flex-wrap gap-2">
-  ${
-    post.tags
-      ?.map(
-        (tag) => `
-    <a href="/tags/${encodeURIComponent(tag)}" 
-       class="bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full hover:bg-gray-300 transition-colors">
-      #${tag}
-    </a>
-  `
-      )
-      .join("") || ""
-  }
-</div>
-          
-          <!-- Post Interactions -->
-          <div class="flex justify-between items-center mt-auto">
-                      <div class="flex gap-4">
-                          <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                              <i data-feather="heart" class="h-4 w-4"></i>
-                              ${post._counts?.reactions || 0}
-                          </button>
-                          <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                              <i data-feather="message-circle" class="h-4 w-4"></i>
-                              ${post._count?.comments || 0}
-                          </button>
-                      </div>
-                      <div class="flex gap-2">
-                          <button class="text-gray-600 hover:text-gray-800">
-                              <i data-feather="share-2" class="h-4 w-4"></i>
-                          </button>
-                          <button class="text-gray-600 hover:text-gray-800">
-                              <i data-feather="bookmark" class="h-4 w-4"></i>
-                          </button>
-                      </div>
-                  </div>
-      </div>
-        `;
-
-    postsContainer.appendChild(postElement);
-  });
-
-  // Initialize Feather icons
-  if (window.feather) {
-    feather.replace();
-  }
-}
-
-/**
- * Renders a message when there are no posts
- */
 function renderNoPosts() {
   postsContainer.innerHTML = `
         <div class="bg-white rounded-lg shadow-md p-6 text-center">

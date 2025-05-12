@@ -11,6 +11,7 @@ import { displayNotification } from "../utility/displayUserNotifications.js";
 import { addPostEventListeners } from "../utility/eventListeners.js";
 import { isReacted } from "../utility/handlers/postHandlers.js";
 import { createModal } from "../utility/createModal.js";
+import { checkOwnership } from "../user/userChecks.js";
 
 // Global state
 let postData = null;
@@ -50,6 +51,11 @@ async function initPage() {
     container.innerHTML = "";
     const card = createPostCard(postData, followerCount);
     container.appendChild(card);
+
+    // Check if the current user owns the post
+    await checkOwnership("post", postData);
+
+    //Call Modal for editing Post
     createModal({
       openButtonId: "editPostBtn",
       modalId: "editModal",
