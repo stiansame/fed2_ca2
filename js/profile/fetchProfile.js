@@ -5,6 +5,7 @@ import { createModal } from "../utility/createModal.js";
 import { profileUpdater } from "./updateProfile.js";
 import { renderPosts } from "../posts/renderAllposts.js";
 import { checkOwnership } from "../user/userChecks.js";
+import { fetchPostsByProfile } from "../posts/apiService.js";
 
 // Get the logged-in user data
 const loggedInUser = getFromLocalStorage("profile");
@@ -38,17 +39,17 @@ async function fetchSingleProfile() {
     const profileNameFromUrl = urlParams.get("username");
 
     // If the profileNameFromUrl is null, fallback to logged-in user's name from localStorage
-    const username = profileNameFromUrl || (loggedInUser && loggedInUser.name);
+    const userName = profileNameFromUrl || (loggedInUser && loggedInUser.name);
 
-    if (!username) {
+    if (!userName) {
       console.error("No username found in URL or localStorage");
       renderErrorState();
       return;
     }
 
-    console.log(`Fetching profile for: ${username}`);
+    console.log(`Fetching profile for: ${userName}`);
 
-    const response = await apiGet(`${PROFILES}/${username}`, {
+    const response = await apiGet(`${PROFILES}/${userName}`, {
       _following: true,
       _followers: true,
       _posts: true,
@@ -56,11 +57,9 @@ async function fetchSingleProfile() {
 
     const profileData = response.data;
 
-    const sortedPosts = profileData.posts.sort((a, b) => {
-      return new Date(b.created) - new Date(a.created);
-    });
-
-    profileData.posts = sortedPosts;
+    //Get all posts by profile
+    const profilePosts = await fetchPostsByProfile(userName);
+    console.log("POSTS", profilePosts);
 
     // Update page title with the fetched profile's name
     document.title = `FEDS profile | ${profileData.name}`;
@@ -80,8 +79,8 @@ async function fetchSingleProfile() {
     profileUpdater();
 
     // Render the posts associated with the profile
-    if (profileData.posts && profileData.posts.length > 0) {
-      renderPosts(profileData.posts, undefined, {
+    if (profilePosts && profilePosts.length > 0) {
+      renderPosts(profilePosts, undefined, {
         containerLayout: "grid",
         cardLayout: "stacked",
       });

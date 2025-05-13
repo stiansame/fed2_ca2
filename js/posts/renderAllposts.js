@@ -10,7 +10,6 @@ export function renderPosts(
     console.error("renderPosts: No container element provided or found.");
     return;
   }
-
   const {
     containerLayout = "column", // 'column' or 'grid'
     cardLayout = "responsive", // 'stacked' or 'responsive'
@@ -37,7 +36,7 @@ export function renderPosts(
 
     card.dataset.url = `/post/single.html?id=${post.id}`;
 
-    // Ensure createdAt exists and is valid
+    // Ensure created exists and is valid
     const postDate = post.created
       ? formatTimeAgo(post.created)
       : "Unknown date";

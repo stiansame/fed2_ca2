@@ -81,7 +81,7 @@ export async function updatePost(postID) {
     const updatedPost = {
       title: titleInput.value,
       body: contentInput.value,
-      tags: tagsInput.value.split(",").map((tag) => tag.trim()), // assuming comma-separated
+      tags: tagsInput.value.split(",").map((tag) => tag.trim()),
       media: {
         url: postImgUrlInput.value,
       },
@@ -92,6 +92,24 @@ export async function updatePost(postID) {
     await apiPut(`/social/posts/${postID}`, updatedPost);
   } catch (error) {
     console.error("There was an error:", error);
+    throw error;
+  }
+}
+
+/**
+ * Fetches posts data by name
+ * @param {string} profileName - Name of the profile
+ * @returns {Promise<Object>} - posts data
+ */
+export async function fetchPostsByProfile(userName) {
+  try {
+    const response = await apiGet(`${PROFILES}/${userName}/posts`, {
+      sort: "created",
+      sortOrder: "desc",
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch posts bt profile", error);
     throw error;
   }
 }
