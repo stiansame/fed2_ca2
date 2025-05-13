@@ -33,16 +33,22 @@ const statsContainers = document.querySelectorAll(
  */
 async function fetchSingleProfile() {
   try {
-    // Check if we have a logged-in user
-    if (!loggedInUser || !loggedInUser.name) {
-      console.error("No user logged in");
+    // Get the username from the URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const profileNameFromUrl = urlParams.get("username");
+
+    // If the profileNameFromUrl is null, fallback to logged-in user's name from localStorage
+    const username = profileNameFromUrl || (loggedInUser && loggedInUser.name);
+
+    if (!username) {
+      console.error("No username found in URL or localStorage");
       renderErrorState();
       return;
     }
 
-    console.log(`Fetching profile for: ${loggedInUser.name}`);
+    console.log(`Fetching profile for: ${username}`);
 
-    const response = await apiGet(`${PROFILES}/${loggedInUser.name}`, {
+    const response = await apiGet(`${PROFILES}/${username}`, {
       _following: true,
       _followers: true,
       _posts: true,
@@ -50,13 +56,19 @@ async function fetchSingleProfile() {
 
     const profileData = response.data;
 
-    //update page name
+    const sortedPosts = profileData.posts.sort((a, b) => {
+      return new Date(b.created) - new Date(a.created);
+    });
+
+    profileData.posts = sortedPosts;
+
+    // Update page title with the fetched profile's name
     document.title = `FEDS profile | ${profileData.name}`;
 
     // Render the profile with the fetched data
     renderProfile(profileData);
 
-    // Check if the current user owns the profile
+    // Check if the current user owns the profile (optional)
     await checkOwnership("profile", profileData);
 
     createModal({
@@ -64,9 +76,10 @@ async function fetchSingleProfile() {
       modalId: "profileModal",
       closeButtonId: "closeProfileModal",
     });
+
     profileUpdater();
 
-    // Render the posts
+    // Render the posts associated with the profile
     if (profileData.posts && profileData.posts.length > 0) {
       renderPosts(profileData.posts, undefined, {
         containerLayout: "grid",

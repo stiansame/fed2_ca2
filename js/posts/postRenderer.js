@@ -85,7 +85,7 @@ export function createPostCard(postData, followerCount) {
     const avatarImg = document.createElement("img");
     avatarImg.src = avatarUrl;
     avatarImg.alt = avatarAlt;
-    avatarImg.className = "h-full w-full object-cover";
+    avatarImg.className = "h-full w-full object-cover cursor-pointer";
     avatarWrapper.appendChild(avatarImg);
   } else {
     const defaultIcon = document.createElement("i");
@@ -99,6 +99,15 @@ export function createPostCard(postData, followerCount) {
   const authorNameEl = document.createElement("h3");
   authorNameEl.className = "font-medium cursor-pointer";
   authorNameEl.textContent = authorName;
+
+  // Add click event to the author's name and avatar
+  authorNameEl.addEventListener("click", () => {
+    window.location.href = `/profile/index.html?username=${authorName}`;
+  });
+
+  avatarWrapper.addEventListener("click", () => {
+    window.location.href = `/profile/index.html?username=${authorName}`;
+  });
 
   const followersEl = document.createElement("div");
   followersEl.className = "text-sm text-gray-600";

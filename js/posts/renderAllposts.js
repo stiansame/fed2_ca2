@@ -1,5 +1,5 @@
-// components/renderPosts.js
 import { truncateTextAtWordBoundary } from "../utility/textTruncater.js";
+import { formatTimeAgo } from "../utility/dateFormatter.js"; // Importing the function
 
 export function renderPosts(
   posts,
@@ -37,6 +37,17 @@ export function renderPosts(
 
     card.dataset.url = `/post/single.html?id=${post.id}`;
 
+    // Ensure createdAt exists and is valid
+    const postDate = post.created
+      ? formatTimeAgo(post.created)
+      : "Unknown date";
+
+    // Modify author info based on layout
+    const authorInfo =
+      containerLayout === "grid"
+        ? `${postDate}` // Only show date when layout is "grid"
+        : `By ${post.author?.name || "Unknown"} <em>${postDate}</em>`; // Show both author and date for "column" layout
+
     card.innerHTML = `
       <!-- Image Wrapper -->
       <div class="image-wrapper h-48 md:h-full relative overflow-hidden" style="padding-top: 75%;">
@@ -54,9 +65,7 @@ export function renderPosts(
           <h3 class="text-lg font-semibold text-gray-800">
             ${post.title || "Untitled"}
           </h3>
-          <p class="text-xs text-gray-500 mb-2">By ${
-            post.author?.name || "Unknown"
-          }</p>
+          <p class="text-xs text-gray-500 mb-2">${authorInfo}</p> <!-- Updated to only show date in grid layout -->
           <div class="prose max-w-none">
             <p class="test-sm text-gray-700 whitespace-pre-line" style="white-space: normal;">
               ${
