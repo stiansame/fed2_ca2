@@ -1,13 +1,20 @@
 import { getFromLocalStorage } from "../user/localStorage.js";
+import { displayNotification } from "../utility/displayUserNotifications.js";
 
 // Fetch current user
 export async function fetchCurrentUser() {
   try {
     const loggedInUser = await getFromLocalStorage("profile");
-    return loggedInUser;
+
+    if (!loggedInUser) {
+      displayNotification("No user found. Please Login!", "error");
+      return "undefined";
+    } else {
+      return loggedInUser;
+    }
   } catch (error) {
     console.error("Failed to fetch user profile:", error);
-    return null;
+    return "undefined";
   }
 }
 

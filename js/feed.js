@@ -144,7 +144,7 @@ fetchAndRenderPosts();
  */
 function renderErrorState() {
   // Display error message in posts section
-  const postsContainer = document.querySelector(".postsContainer"); // <-- add this
+  const postsContainer = document.querySelector(".postsContainer");
 
   if (!postsContainer) return;
 
@@ -155,7 +155,7 @@ function renderErrorState() {
     `;
 
   // return user to login page
-  /*   setTimeout(() => {
+  setTimeout(() => {
     window.location.href = "../../";
-  }, 2000); */
+  }, 2000);
 }
