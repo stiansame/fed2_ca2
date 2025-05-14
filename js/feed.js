@@ -4,6 +4,7 @@ import { newPost } from "./posts/newPost.js";
 import { updateCount } from "./utility/textCounter.js";
 import { renderPosts } from "./posts/renderAllposts.js";
 import { isReacted } from "./utility/handlers/postHandlers.js";
+import { fetchCurrentUser } from "./user/userChecks.js";
 
 //add eventlistener for characterCounter
 window.addEventListener("DOMContentLoaded", () => {
@@ -21,13 +22,46 @@ let page = 1;
 const limit = 10;
 let isLoading = false;
 
-// Fetch and render
+//Get current user
+const userFromStorage = await fetchCurrentUser();
+const currentUser = userFromStorage.name;
+
+//Default filter
+let currentFilter = "fedsPosts";
+
+const fedsFilterUrl = "/social/posts/?_tag=feds";
+const currentUserFilterUrl = `/social/profiles/${currentUser}/posts`;
+const followingFilterUrl = "/social/posts/following";
+
+// Fetch and render posts based on current filter
 async function fetchAndRenderPosts() {
   if (isLoading) return;
   isLoading = true;
 
+  // Apply filter parameters to query
+  let filterUrl = "";
+
+  switch (currentFilter) {
+    case "fedsPosts":
+      filterUrl = fedsFilterUrl;
+      break;
+    case "following":
+      filterUrl = followingFilterUrl;
+      break;
+    case "yourPosts":
+      filterUrl = currentUserFilterUrl;
+      break;
+    case "allPosts":
+      filterUrl = "/social/posts";
+      break;
+    default:
+      filterUrl = fedsFilterUrl;
+      break;
+  }
+
   try {
-    const response = await apiGet("/social/posts?", {
+    //Get filtered posts
+    const response = await apiGet(filterUrl, {
       limit,
       page,
       _author: true,
@@ -44,16 +78,14 @@ async function fetchAndRenderPosts() {
       cardLayout: "responsive",
     });
 
-    // Show "Load More" if there are still more posts
-    if (newPosts.length >= limit) {
-      loadMoreBtn.style.display =
-        "w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-800";
+    // Show "Load More" button if there are more posts to load
+    if (newPosts.length === limit) {
+      loadMoreBtn.style.display = "block";
     } else {
       loadMoreBtn.style.display = "none";
     }
 
     page++;
-
     newPost();
   } catch (error) {
     console.error("Failed to fetch posts:", error);
@@ -62,6 +94,18 @@ async function fetchAndRenderPosts() {
     isLoading = false;
   }
 }
+
+// Wait for DOM to load, THEN fetch posts
+document.addEventListener("DOMContentLoaded", () => {
+  const loadMoreBtn = document.getElementById("loadMoreBtn");
+
+  // Attach click handler
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener("click", () => {
+      fetchAndRenderPosts(); // Fetch more posts on "Load More"
+    });
+  }
+});
 
 createModal({
   openButtonId: "newPostBtn",
@@ -83,20 +127,17 @@ createModal({
   },
 });
 
-// Wait for DOM to load, THEN fetch posts
-document.addEventListener("DOMContentLoaded", () => {
-  const loadMoreBtn = document.getElementById("loadMoreBtn");
-
-  // Attach click handler
-  if (loadMoreBtn) {
-    loadMoreBtn.addEventListener("click", () => {
-      fetchAndRenderPosts();
-    });
-  }
-
-  // Initial post load
-  fetchAndRenderPosts();
+// Event listener to detect dropdown filter changes
+const filterDropdown = document.getElementById("filterBy");
+filterDropdown.addEventListener("change", function (event) {
+  currentFilter = event.target.value; // Update the filter based on the dropdown selection
+  postData = []; // Clear the existing posts
+  page = 1; // Reset the page to 1 for the new filter
+  fetchAndRenderPosts(); // Fetch posts with the new filter
 });
+
+// Initial post load
+fetchAndRenderPosts();
 
 /**
  * Renders an error state when profile fetching fails
@@ -114,7 +155,7 @@ function renderErrorState() {
     `;
 
   // return user to login page
-  setTimeout(() => {
+  /*   setTimeout(() => {
     window.location.href = "../../";
-  }, 2000);
+  }, 2000); */
 }
