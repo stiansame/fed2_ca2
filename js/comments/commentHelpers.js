@@ -10,6 +10,7 @@ export function createCommentElement(comment, currentUser) {
   const div = document.createElement("div");
   div.className = "p-4";
   div.dataset.commentId = comment.id;
+  div.dataset.postId = comment.postId;
 
   div.innerHTML = `
     <div class="flex items-start space-x-3">
@@ -34,7 +35,8 @@ export function createCommentElement(comment, currentUser) {
           </button>
           <button class="reply-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${
             comment.id
-          }">
+          }"
+          data-post-id="${comment.postId}">
             <i data-feather="message-square" class="h-3 w-3 inline"></i> Reply
           </button>
           ${
@@ -43,7 +45,8 @@ export function createCommentElement(comment, currentUser) {
             <button class="edit-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${comment.id}">
               <i data-feather="edit" class="h-3 w-3 inline"></i> Edit
             </button>
-            <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700" data-comment-id="${comment.id}">
+            <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700" data-comment-id="${comment.id}"
+            >
               <i data-feather="trash-2" class="h-3 w-3 inline"></i> Delete
             </button>
           `

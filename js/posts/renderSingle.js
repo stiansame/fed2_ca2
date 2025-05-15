@@ -55,9 +55,11 @@ async function initPage() {
     // Check if the current user owns the post
     await checkOwnership("post", postData);
 
+    // Modals
+
     //Call Modal for editing Post
     createModal({
-      openButtonId: "editPostBtn",
+      openButtonSelector: "#editPostBtn",
       modalId: "editModal",
       closeButtonId: "closeEditModal",
       formId: "editPostForm",
@@ -85,16 +87,7 @@ async function initPage() {
 }
 
 // Initialize on DOMContentLoaded
-document.addEventListener(
-  "DOMContentLoaded",
-  initPage,
-  createModal({
-    openButtonId: "newPostBtn",
-    modalId: "newPostModal",
-    closeButtonId: "closeModal",
-    formId: "newPostForm",
-  })
-);
+document.addEventListener("DOMContentLoaded", initPage);
 
 // Export functions that might be needed elsewhere
 export { initPage };

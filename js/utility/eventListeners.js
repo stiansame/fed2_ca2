@@ -57,13 +57,13 @@ export function addCommentEventListeners(container) {
   });
 
   // Reply buttons
-  container.querySelectorAll(".reply-comment-btn").forEach((btn) => {
+  /*   container.querySelectorAll(".reply-comment-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const commentId = e.currentTarget.dataset.commentId;
       displayNotification("Reply mode activated", "info");
       // Would normally create a reply form
     });
-  });
+  }); */
 
   // Edit buttons
   container.querySelectorAll(".edit-comment-btn").forEach((btn) => {

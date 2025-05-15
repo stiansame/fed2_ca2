@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   filterDropdown.addEventListener("change", (e) => {
     currentFilter = e.target.value;
     titleEl.textContent = titles[currentFilter] || "Feed";
+    document.title = `FEDS feed | ${titles[currentFilter]}`;
     postData = [];
     page = 1;
     fetchAndRenderPosts(loadMoreBtn);

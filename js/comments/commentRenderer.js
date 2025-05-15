@@ -1,5 +1,7 @@
 import { addCommentEventListeners } from "../utility/eventListeners.js";
 import { createCommentElement, createReplyElement } from "./commentHelpers.js";
+import { createModal } from "../utility/createModal.js";
+import { fetchPost, postComment } from "../posts/apiService.js";
 
 /**
  * Renders comments in the provided container
@@ -10,6 +12,7 @@ import { createCommentElement, createReplyElement } from "./commentHelpers.js";
 export function renderComments(comments, currentUser, container) {
   if (!container) {
     console.error("No container provided for comments");
+
     return;
   }
 
@@ -60,6 +63,53 @@ export function renderComments(comments, currentUser, container) {
 
   // Re-initialize Feather icons
   feather.replace();
+
+  //Establish Post and comment ID's
+  let currentPostId = null;
+  let currentCommentId = null;
+
+  //comment modal
+  createModal({
+    openButtonSelector: "#postCommentBtn",
+    modalId: "commentModal",
+    closeButtonId: "closeCommentModal",
+    formId: "commentForm",
+
+    onOpen: (btn, modal) => {
+      currentPostId = btn.dataset.postId;
+      console.log(currentPostId);
+    },
+    onSubmit: async () => {
+      await postComment(
+        currentPostId,
+        null,
+        document.querySelector("#commentContent").value
+      );
+      const updatedPost = await fetchPost(currentPostId);
+      renderComments(updatedPost.comments, currentUser, commentsContainer);
+    },
+  });
+
+  //reply modal
+  createModal({
+    openButtonSelector: ".reply-comment-btn",
+    modalId: "replyModal",
+    closeButtonId: "closeReplyModal",
+    formId: "replyForm",
+    onOpen: (btn, modal) => {
+      currentPostId = btn.dataset.postId;
+      currentCommentId = Number(btn.dataset.commentId);
+      console.log(currentPostId, currentCommentId);
+    },
+    onSubmit: async () => {
+      const replyValue = document.querySelector("#replyContent").value;
+      console.log("Reply Value:", replyValue);
+
+      await postComment(currentPostId, currentCommentId, replyValue);
+      const updatedPost = await fetchPost(currentPostId);
+      renderComments(updatedPost.comments, currentUser, commentsContainer);
+    },
+  });
 
   // Add event listeners to comment action buttons
   addCommentEventListeners(container);

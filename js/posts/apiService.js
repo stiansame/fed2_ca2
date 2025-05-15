@@ -1,6 +1,8 @@
 import { apiGet } from "../api/getAPI.js";
 import { PROFILES } from "../api/apiEndpoints.js";
 import { apiPut } from "../api/putAPI.js";
+import { apiPost } from "../api/postAPI.js";
+import { sanitizeHtml } from "../utility/sanitizer.js";
 
 /**
  * Fetches post data by ID
@@ -64,7 +66,10 @@ export async function fetchComments(postId) {
     throw error;
   }
 }
-
+/**
+ * Update post
+ * @param {string} postID - ID of the post
+ */
 export async function updatePost(postID) {
   const updateBtn = document.getElementById("updatePostBtn");
   const updateForm = document.getElementById("editPostForm");
@@ -110,6 +115,34 @@ export async function fetchPostsByProfile(userName) {
     return response.data;
   } catch (error) {
     console.error("Failed to fetch posts bt profile", error);
+    throw error;
+  }
+}
+
+/**
+ *
+ * @param {string} postId - ID of the post
+ * @param {Number} replyToId - ID of the comment to reply to
+ * @param {Object} contentValue - body and replyToID for comment
+ */
+
+export async function postComment(postId, replyToId = null, contentValue) {
+  try {
+    const body = contentValue;
+    const newComment = {
+      body: body,
+      replyToId: replyToId,
+    };
+
+    console.log("Sending comment to API:", {
+      url: `/social/posts/${postId}/comment`,
+      payload: newComment,
+    });
+
+    // Post it
+    await apiPost(`/social/posts/${postId}/comment`, newComment);
+  } catch (error) {
+    console.error("Failed to post comment", error);
     throw error;
   }
 }

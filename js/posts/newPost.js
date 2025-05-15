@@ -1,5 +1,6 @@
 import { apiPost } from "../api/postAPI.js";
 import { POSTS } from "../api/apiEndpoints.js";
+import { sanitizeHtml } from "../utility/sanitizer.js";
 
 export function newPost() {
   const postBtn = document.getElementById("submitPostBtn");
@@ -77,9 +78,4 @@ export function newPost() {
       window.location.reload(true);
     }, 1500);
   });
-}
-
-// Function to convert < and > to their HTML entities
-function sanitizeHtml(str) {
-  return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }

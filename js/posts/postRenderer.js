@@ -44,6 +44,9 @@ export function createPostCard(postData, followerCount) {
   const postDate = new Date(created).toLocaleDateString();
   document.title = `FEDS | ${title}`;
 
+  //LOGGING
+  console.log("POSTDATA:", postData);
+
   // Root container
   const card = document.createElement("div");
   card.className =
@@ -166,6 +169,7 @@ export function createPostCard(postData, followerCount) {
   commentBtn.className =
     "flex items-center gap-1 text-gray-600 hover:text-gray-800";
   commentBtn.id = "postCommentBtn";
+  commentBtn.dataset.postId = postData.id;
   commentBtn.innerHTML = `
   <i data-feather="message-circle" class="h-4 w-4"></i>
   <span>${commentCount}</span>
