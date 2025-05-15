@@ -85,15 +85,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   // grab the DOM elements after they’re parsed
   const loadMoreBtn = document.getElementById("loadMoreBtn");
   const filterDropdown = document.getElementById("filterBy");
+  const titleEl = document.getElementById("feedTitle");
 
   // hook up “Load More”
   loadMoreBtn.addEventListener("click", () => {
     fetchAndRenderPosts(loadMoreBtn);
   });
 
+  // Map filter and H1 titles
+  const titles = {
+    allPosts: "All Posts",
+    fedsPosts: "Latest Frontend Shitposting",
+    following: "Latest from your followers",
+    yourPosts: "Your Posts",
+  };
+
   // hook up filter changes
   filterDropdown.addEventListener("change", (e) => {
     currentFilter = e.target.value;
+    titleEl.textContent = titles[currentFilter] || "Feed";
     postData = [];
     page = 1;
     fetchAndRenderPosts(loadMoreBtn);
