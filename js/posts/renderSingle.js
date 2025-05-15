@@ -3,6 +3,7 @@ import {
   fetchProfileData,
   fetchComments,
   updatePost,
+  postComment,
 } from "./apiService.js";
 import { createPostCard } from "./postRenderer.js";
 import { renderComments } from "../comments/commentRenderer.js";
@@ -12,6 +13,7 @@ import { addPostEventListeners } from "../utility/eventListeners.js";
 import { isReacted } from "../utility/handlers/postHandlers.js";
 import { createModal } from "../utility/createModal.js";
 import { checkOwnership } from "../user/userChecks.js";
+import { refreshAll } from "../utility/handlers/refreshAll.js";
 
 // Global state
 let postData = null;
@@ -66,6 +68,31 @@ async function initPage() {
       onSubmit: () => updatePost(postId),
     });
 
+    //Call comment modal
+    let currentPostId = null;
+    let currentCommentId = null;
+
+    createModal({
+      openButtonSelector: "#postCommentBtn",
+      modalId: "commentModal",
+      closeButtonId: "closeCommentModal",
+      formId: "commentForm",
+
+      onOpen: (btn, modal) => {
+        currentPostId = btn.dataset.postId;
+        console.log(currentPostId);
+      },
+      onSubmit: async () => {
+        await postComment(
+          currentPostId,
+          null,
+          document.querySelector("#commentContent").value
+        );
+        const updatedPost = await fetchPost(currentPostId);
+        await refreshAll(currentPostId, currentUser, followerCount);
+      },
+    });
+
     // Re-initialize Feather icons after adding the card to the DOM
     feather.replace();
 
@@ -77,6 +104,27 @@ async function initPage() {
     comments = await fetchComments(postId);
     const commentsContainer = document.getElementById("commentsContainer");
     renderComments(comments, currentUser, commentsContainer);
+
+    //reply modal
+    createModal({
+      openButtonSelector: ".reply-comment-btn",
+      modalId: "replyModal",
+      closeButtonId: "closeReplyModal",
+      formId: "replyForm",
+      onOpen: (btn, modal) => {
+        currentPostId = btn.dataset.postId;
+        currentCommentId = Number(btn.dataset.commentId);
+        console.log(currentPostId, currentCommentId);
+      },
+      onSubmit: async () => {
+        const replyValue = document.querySelector("#replyContent").value;
+        console.log("Reply Value:", replyValue);
+
+        await postComment(currentPostId, currentCommentId, replyValue);
+        const updatedPost = await fetchPost(currentPostId);
+        await refreshAll(currentPostId, currentUser, followerCount);
+      },
+    });
 
     // One final feather.replace() for any icons in comments
     feather.replace();
