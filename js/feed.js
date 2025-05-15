@@ -105,7 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
       fetchAndRenderPosts(); // Fetch more posts on "Load More"
     });
   }
-
   // Initial post load
   fetchAndRenderPosts();
 });
@@ -144,7 +143,7 @@ filterDropdown.addEventListener("change", function (event) {
  */
 function renderErrorState() {
   // Display error message in posts section
-  const postsContainer = document.querySelector(".postsContainer");
+  const postsContainer = document.querySelector(".postsContainer"); // <-- add this
 
   if (!postsContainer) return;
 
