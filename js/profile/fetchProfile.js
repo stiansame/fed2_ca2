@@ -59,7 +59,6 @@ async function fetchSingleProfile() {
 
     //Get all posts by profile
     const profilePosts = await fetchPostsByProfile(userName);
-    console.log("POSTS", profilePosts);
 
     // Update page title with the fetched profile's name
     document.title = `FEDS profile | ${profileData.name}`;
