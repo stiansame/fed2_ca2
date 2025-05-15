@@ -66,11 +66,13 @@ async function fetchSingleProfile() {
     // Render the profile with the fetched data
     renderProfile(profileData);
 
-    // Check if the current user owns the profile (optional)
-    await checkOwnership("profile", profileData);
+    // Check if the current user owns the profile and display edit button
+    const editBtn = document.getElementById("editProfileBtn");
+    await checkOwnership("profile", profileData, editBtn);
 
+    //call edit Profile Modal
     createModal({
-      openButtonId: "openProfileModalBtn",
+      openButtonSelector: "#editProfileBtn",
       modalId: "profileModal",
       closeButtonId: "closeProfileModal",
     });

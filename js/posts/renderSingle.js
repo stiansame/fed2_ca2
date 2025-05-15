@@ -54,8 +54,9 @@ async function initPage() {
     const card = createPostCard(postData, followerCount);
     container.appendChild(card);
 
-    // Check if the current user owns the post
-    await checkOwnership("post", postData);
+    // Check if the current user owns the post and display edit button
+    const editBtn = document.getElementById("editPostBtn");
+    await checkOwnership("post", postData, editBtn);
 
     // Modals
 

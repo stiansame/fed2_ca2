@@ -1,7 +1,5 @@
 import { addCommentEventListeners } from "../utility/eventListeners.js";
 import { createCommentElement, createReplyElement } from "./commentHelpers.js";
-import { createModal } from "../utility/createModal.js";
-import { fetchPost, postComment } from "../posts/apiService.js";
 
 /**
  * Renders comments in the provided container
@@ -12,7 +10,6 @@ import { fetchPost, postComment } from "../posts/apiService.js";
 export function renderComments(comments, currentUser, container) {
   if (!container) {
     console.error("No container provided for comments");
-
     return;
   }
 

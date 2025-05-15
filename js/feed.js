@@ -1,5 +1,5 @@
 import { apiGet } from "./api/getAPI.js";
-import { createModal } from "./utility/modalHandler.js";
+import { createModal } from "./utility/createModal.js";
 import { newPost } from "./posts/newPost.js";
 import { updateCount } from "./utility/textCounter.js";
 import { renderPosts } from "./posts/renderAllposts.js";
@@ -112,15 +112,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // set up modal
   createModal({
-    openButtonId: "newPostBtn",
+    openButtonSelector: "#newPostBtn",
     modalId: "modal",
     closeButtonId: "closeModal",
     formId: "newPostForm",
-    image: { inputId: "imageUrlInput", previewId: "imagePreview" },
     onSubmit: ({ form }) => {
       /* … */
     },
   });
+
+  //setup for image preview in Modal
+  const loadImageBtn = document.getElementById("loadImageBtn");
+  const imageUrlInput = document.getElementById("imageUrl");
+  const imagePreview = document.getElementById("imagePreview");
+
+  if (loadImageBtn && imageUrlInput && imagePreview) {
+    loadImageBtn.addEventListener("click", () => {
+      const url = imageUrlInput.value.trim();
+      imagePreview.innerHTML = ""; // Clear previous
+      if (url) {
+        // Create an image element
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "Preview";
+        img.className =
+          "max-w-full w-full max-h-80 object-cover rounded-md border mt-2";
+        img.onerror = () => {
+          imagePreview.innerHTML = `<p class="text-red-500 text-sm mt-2">Could not load image. Check the URL.</p>`;
+        };
+        imagePreview.appendChild(img);
+      }
+    });
+  }
 
   // Initial load
   fetchAndRenderPosts(loadMoreBtn);

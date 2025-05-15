@@ -55,9 +55,9 @@
                         <img src="../api/images/profile/my_banner.png" alt="Profile Banner" class="w-full h-full object-cover" id="profileBannerImg">
                     </div>
 
-                    <!-- Edit Profile Icon (moved below the banner and aligned right) -->
+                    <!-- Edit Profile Icon  -->
                     <div class="flex justify-end mt-4 pr-4">
-                        <button id="openProfileModalBtn" class="text-blue-700 hover:text-blue-900 text-lg" aria-label="Edit profile">
+                        <button id="editProfileBtn" class="text-blue-700 hover:text-blue-900 text-lg" aria-label="Edit profile">
                             <i data-feather="edit" class="h-6 w-6"></i>
                         </button>
                     </div>
@@ -105,9 +105,9 @@
             </div>
 
             <!-- Update Profile Modal -->
-            <div id="profileModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
 
-                <div class="bg-white rounded-lg w-full max-w-lg mx-4">
+                <div class="modal-content bg-white rounded-lg w-full max-w-lg mx-4 transform transition-all duration-200 scale-95 opacity-0">
                     <div class="p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-semibold">Update Profile</h2>

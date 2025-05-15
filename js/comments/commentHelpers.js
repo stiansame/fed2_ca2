@@ -1,4 +1,5 @@
 import { formatTimeAgo } from "../utility/dateFormatter.js";
+import { checkOwnership } from "../user/userChecks.js";
 
 /**
  * Creates a comment element
@@ -17,7 +18,7 @@ export function createCommentElement(comment, currentUser) {
       <div class="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
         <img src="${
           comment.author?.avatar?.url
-        }"class="h-full w-full rounded-full object-cover" />
+        }" class="h-full w-full rounded-full object-cover" />
       </div>
       <div class="flex-grow">
         <h4 class="font-medium">${comment.author?.name || "Unknown"}</h4>
@@ -25,37 +26,30 @@ export function createCommentElement(comment, currentUser) {
           comment.created
         )}</span>
         <p class="text-gray-800 mt-2">${comment.body}</p>
-        
         <div class="mt-2 flex items-center space-x-4">
-          <button class="like-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${
-            comment.id
-          }">
-            <i data-feather="heart" class="h-3 w-3 inline"></i> 
-            <span>${comment._count?.reactions || 0}</span> Likes
-          </button>
           <button class="reply-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${
             comment.id
-          }"
-          data-post-id="${comment.postId}">
+          }" data-post-id="${comment.postId}">
             <i data-feather="message-square" class="h-3 w-3 inline"></i> Reply
           </button>
-          ${
-            currentUser && comment.author?.name === currentUser.name
-              ? `
-            <button class="edit-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${comment.id}">
-              <i data-feather="edit" class="h-3 w-3 inline"></i> Edit
-            </button>
-            <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700" data-comment-id="${comment.id}"
-            >
-              <i data-feather="trash-2" class="h-3 w-3 inline"></i> Delete
-            </button>
-          `
-              : ""
-          }
+          <button class="edit-comment-btn text-xs text-gray-600 hover:text-blue-700 hidden" data-comment-id="${
+            comment.id
+          }">
+            <i data-feather="edit" class="h-3 w-3 inline"></i> Edit
+          </button>
+          <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700 hidden" data-comment-id="${
+            comment.id
+          }">
+            <i data-feather="trash-2" class="h-3 w-3 inline"></i> Delete
+          </button>
         </div>
       </div>
     </div>
   `;
+
+  // Show/hide buttons based on ownership
+  const deleteBtn = div.querySelector(".delete-comment-btn");
+  checkOwnership("comment", comment, deleteBtn);
 
   return div;
 }
@@ -73,8 +67,10 @@ export function createReplyElement(reply, currentUser) {
 
   div.innerHTML = `
     <div class="flex items-start space-x-3">
-      <div class="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-        <i data-feather="user" class="h-4 w-4 text-blue-700"></i>
+      <div class="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+        <img src="${
+          reply.author?.avatar?.url
+        }" class="h-full w-full rounded-full object-cover" />
       </div>
       <div>
         <h5 class="font-medium text-sm">${reply.author?.name || "Unknown"}</h5>
@@ -82,7 +78,6 @@ export function createReplyElement(reply, currentUser) {
           reply.created
         )}</span>
         <p class="text-gray-800 text-sm mt-1">${reply.body}</p>
-        
         <div class="mt-1 flex items-center space-x-4">
           <button class="like-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${
             reply.id
@@ -90,22 +85,24 @@ export function createReplyElement(reply, currentUser) {
             <i data-feather="heart" class="h-3 w-3 inline"></i>
             <span>${reply._count?.reactions || 0}</span> Like
           </button>
-          ${
-            currentUser && reply.author?.name === currentUser.name
-              ? `
-            <button class="edit-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${reply.id}">
-              <i data-feather="edit" class="h-3 w-3 inline"></i> Edit
-            </button>
-            <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700" data-comment-id="${reply.id}">
-              <i data-feather="trash-2" class="h-3 w-3 inline"></i> Delete
-            </button>
-          `
-              : ""
-          }
+          <button class="edit-comment-btn text-xs text-gray-600 hover:text-blue-700 hidden" data-comment-id="${
+            reply.id
+          }">
+            <i data-feather="edit" class="h-3 w-3 inline"></i> Edit
+          </button>
+          <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700 hidden" data-comment-id="${
+            reply.id
+          }">
+            <i data-feather="trash-2" class="h-3 w-3 inline"></i> Delete
+          </button>
         </div>
       </div>
     </div>
   `;
+
+  // Show/hide buttons based on ownership
+  const deleteBtn = div.querySelector(".delete-comment-btn");
+  checkOwnership("reply", reply, deleteBtn);
 
   return div;
 }

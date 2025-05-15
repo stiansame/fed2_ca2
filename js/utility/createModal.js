@@ -1,10 +1,34 @@
+/**
+ * Sets up a modal dialog with open/close logic and optional form handling.
+ *
+ * @param {Object} options - Modal setup options.
+ * @param {string} options.openButtonSelector - CSS selector or ID (#id) for button(s) that open the modal.
+ * @param {string} options.modalId - The ID of the modal element to display.
+ * @param {string} options.closeButtonId - The ID of the button that closes the modal.
+ *@param {string} [options.modalContentId="modalContent"] - Content wrapper ID (default: "modalContent")
+
+ * @param {string} [options.formId] - Optional. The ID of a form inside the modal, if you want to handle form submission.
+ * @param {function} [options.onSubmit] - Optional. Async function called when the form submits. Should throw on error.
+ * @param {function} [options.onOpen] - Optional. Function called when the modal is opened. Receives (triggerBtn, modalElem).
+ *
+ * @returns {void}
+ *
+ * @example
+ * // Simple modal without form
+ * createModal({
+ *   openButtonSelector: '#openModalBtn',
+ *   modalId: 'modal',
+ *   closeButtonId: 'modalClose'
+ * });
+ */
+
 export function createModal({
   openButtonSelector, // can be a selector string (class, attribute, or #id)
   modalId,
   closeButtonId,
   formId,
   onSubmit,
-  onOpen, // Optional: callback when modal opens, gets the trigger button as argument
+  onOpen,
 }) {
   if (!openButtonSelector || typeof openButtonSelector !== "string") {
     console.warn("createModal: Missing or invalid openButtonSelector.");
@@ -18,10 +42,11 @@ export function createModal({
     const btn = document.getElementById(openButtonSelector.slice(1));
     openButtons = btn ? [btn] : [];
   } else {
-    openButtons = document.querySelectorAll(openButtonSelector);
+    openButtons = Array.from(document.querySelectorAll(openButtonSelector));
   }
 
   const modal = document.getElementById(modalId);
+  const modalContent = modal.querySelector(".modal-content");
   const closeButton = document.getElementById(closeButtonId);
   const form = formId ? document.getElementById(formId) : null;
 
@@ -32,8 +57,15 @@ export function createModal({
     return;
   }
 
+  // Set ARIA attributes
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+
   function openModal(e) {
-    modal.classList.remove("hidden");
+    modal.classList.remove("opacity-0", "pointer-events-none");
+    modal.classList.add("opacity-100", "pointer-events-auto");
+    modalContent.classList.remove("scale-95", "opacity-0");
+    modalContent.classList.add("scale-100", "opacity-100");
     document.addEventListener("keydown", handleEscClose);
     // Optionally handle data attributes from the trigger button
     if (typeof onOpen === "function") {
@@ -42,7 +74,10 @@ export function createModal({
   }
 
   function closeModal() {
-    modal.classList.add("hidden");
+    modal.classList.remove("opacity-100", "pointer-events-auto");
+    modal.classList.add("opacity-0", "pointer-events-none");
+    modalContent.classList.remove("scale-100", "opacity-100");
+    modalContent.classList.add("scale-95", "opacity-0");
     document.removeEventListener("keydown", handleEscClose);
   }
 
@@ -79,28 +114,3 @@ export function createModal({
     });
   }
 }
-
-// --- Example usage for comments/replies ---
-
-/* 
-createModal({
-  openButtonSelector: '.reply-btn[data-comment-id]',
-  modalId: 'commentReplyModal',
-  closeButtonId: 'closeReplyModal',
-  formId: 'replyForm',
-  onOpen: (btn, modal) => {
-    // Optional: update modal content based on which button was clicked
-    const commentId = btn.dataset.commentId;
-    // For example, fill a hidden input in the form:
-    const input = modal.querySelector('input[name="commentId"]');
-    if (input) input.value = commentId;
-    // Or display commentId somewhere:
-    const display = modal.querySelector('.comment-id-display');
-    if (display) display.textContent = `Replying to comment #${commentId}`;
-  },
-  onSubmit: async () => {
-    // Your submit logic here (e.g., AJAX request)
-    // Don't forget to use the commentId from the form if needed!
-  },
-});
-*/

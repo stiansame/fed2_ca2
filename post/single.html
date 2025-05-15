@@ -182,11 +182,14 @@
     </div>
 
     <!-- Edit Post Modal -->
-    <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg w-full max-w-lg mx-4">
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
+
+        <div class="modal-content bg-white rounded-lg w-full max-w-lg mx-4 transform transition-all duration-200 scale-95 opacity-0">
+
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold">Edit Post</h2>
+                    <h2 id="editModalTitle" class="text-xl font-semibold">Edit Post</h2>
+
                     <button id="closeEditModal" class="text-gray-500 hover:text-gray-700">
                         <i data-feather="x" class="h-6 w-6"></i>
                     </button>
@@ -238,8 +241,8 @@
 
 
     <!-- comment Modal -->
-    <div id="commentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg w-full max-w-lg mx-4">
+    <div id="commentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
+        <div class="modal-content bg-white rounded-lg w-full max-w-lg mx-4 transform transition-all duration-200 scale-95 opacity-0">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold">Comment post</h2>
@@ -263,8 +266,8 @@
 
 
     <!-- Reply Modal -->
-    <div id="replyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg w-full max-w-lg mx-4">
+    <div id="replyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
+        <div class="modal-content bg-white rounded-lg w-full max-w-lg mx-4 transform transition-all duration-200 scale-95 opacity-0">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold">Reply to Comment</h2>
