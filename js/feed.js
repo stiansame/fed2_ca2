@@ -105,6 +105,9 @@ document.addEventListener("DOMContentLoaded", () => {
       fetchAndRenderPosts(); // Fetch more posts on "Load More"
     });
   }
+
+  // Initial post load
+  fetchAndRenderPosts();
 });
 
 createModal({
@@ -135,9 +138,6 @@ filterDropdown.addEventListener("change", function (event) {
   page = 1; // Reset the page to 1 for the new filter
   fetchAndRenderPosts(); // Fetch posts with the new filter
 });
-
-// Initial post load
-fetchAndRenderPosts();
 
 /**
  * Renders an error state when profile fetching fails
