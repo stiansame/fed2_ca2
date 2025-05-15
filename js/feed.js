@@ -6,41 +6,24 @@ import { renderPosts } from "./posts/renderAllposts.js";
 import { isReacted } from "./utility/handlers/postHandlers.js";
 import { fetchCurrentUser } from "./user/userChecks.js";
 
-//add eventlistener for characterCounter
-window.addEventListener("DOMContentLoaded", () => {
-  updateCount("content", "charCount");
-});
-
-// Initialize Feather icons
-feather.replace();
-
-// Define empty postData
+// define state
 let postData = [];
-
-//Define page, limit
 let page = 1;
 const limit = 10;
 let isLoading = false;
-
-//Get current user
-const userFromStorage = await fetchCurrentUser();
-const currentUser = userFromStorage.name;
-
-//Default filter
 let currentFilter = "fedsPosts";
 
+// Filter URLs...
 const fedsFilterUrl = "/social/posts/?_tag=feds";
-const currentUserFilterUrl = `/social/profiles/${currentUser}/posts`;
 const followingFilterUrl = "/social/posts/following";
+let currentUserFilterUrl;
 
-// Fetch and render posts based on current filter
-async function fetchAndRenderPosts() {
+async function fetchAndRenderPosts(loadMoreBtn) {
   if (isLoading) return;
   isLoading = true;
 
-  // Apply filter parameters to query
-  let filterUrl = "";
-
+  // pick filter URL
+  let filterUrl;
   switch (currentFilter) {
     case "fedsPosts":
       filterUrl = fedsFilterUrl;
@@ -60,8 +43,7 @@ async function fetchAndRenderPosts() {
   }
 
   try {
-    //Get filtered posts
-    const response = await apiGet(filterUrl, {
+    const { data: newPosts } = await apiGet(filterUrl, {
       limit,
       page,
       _author: true,
@@ -69,16 +51,13 @@ async function fetchAndRenderPosts() {
       sortOrder: "desc",
     });
 
-    const newPosts = response.data;
-
     postData = [...postData, ...newPosts];
-
     renderPosts(postData, undefined, {
       containerLayout: "column",
       cardLayout: "responsive",
     });
 
-    // Show "Load More" button if there are more posts to load
+    // show/hide Load More
     if (newPosts.length === limit) {
       loadMoreBtn.style.display = "block";
     } else {
@@ -87,74 +66,51 @@ async function fetchAndRenderPosts() {
 
     page++;
     newPost();
-  } catch (error) {
-    console.error("Failed to fetch posts:", error);
+  } catch (err) {
+    console.error("Failed to fetch posts:", err);
     renderErrorState();
   } finally {
     isLoading = false;
   }
 }
 
-// Wait for DOM to load, THEN fetch posts
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  updateCount("content", "charCount");
+  feather.replace();
+
+  // fetch current user
+  const { name: currentUser } = await fetchCurrentUser();
+  currentUserFilterUrl = `/social/profiles/${currentUser}/posts`;
+
+  // grab the DOM elements after they’re parsed
   const loadMoreBtn = document.getElementById("loadMoreBtn");
+  const filterDropdown = document.getElementById("filterBy");
 
-  // Attach click handler
-  if (loadMoreBtn) {
-    loadMoreBtn.addEventListener("click", () => {
-      fetchAndRenderPosts(); // Fetch more posts on "Load More"
-    });
-  }
-  // Initial post load
-  fetchAndRenderPosts();
+  // hook up “Load More”
+  loadMoreBtn.addEventListener("click", () => {
+    fetchAndRenderPosts(loadMoreBtn);
+  });
+
+  // hook up filter changes
+  filterDropdown.addEventListener("change", (e) => {
+    currentFilter = e.target.value;
+    postData = [];
+    page = 1;
+    fetchAndRenderPosts(loadMoreBtn);
+  });
+
+  // set up modal
+  createModal({
+    openButtonId: "newPostBtn",
+    modalId: "modal",
+    closeButtonId: "closeModal",
+    formId: "newPostForm",
+    image: { inputId: "imageUrlInput", previewId: "imagePreview" },
+    onSubmit: ({ form }) => {
+      /* … */
+    },
+  });
+
+  // Initial load
+  fetchAndRenderPosts(loadMoreBtn);
 });
-
-createModal({
-  openButtonId: "newPostBtn",
-  modalId: "modal",
-  closeButtonId: "closeModal",
-  formId: "newPostForm",
-  image: {
-    inputId: "imageUrlInput",
-    previewId: "imagePreview",
-  },
-  onSubmit: ({ imageUrl, form }) => {
-    const title = form.querySelector("#title").value;
-    const content = form.querySelector("#content").value;
-    const tags = Array.from(form.querySelector("#tags").value.split(","))
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
-
-    /*     savePost({ title, content, imageUrl, tags }); */
-  },
-});
-
-// Event listener to detect dropdown filter changes
-const filterDropdown = document.getElementById("filterBy");
-filterDropdown.addEventListener("change", function (event) {
-  currentFilter = event.target.value; // Update the filter based on the dropdown selection
-  postData = []; // Clear the existing posts
-  page = 1; // Reset the page to 1 for the new filter
-  fetchAndRenderPosts(); // Fetch posts with the new filter
-});
-
-/**
- * Renders an error state when profile fetching fails
- */
-function renderErrorState() {
-  // Display error message in posts section
-  const postsContainer = document.querySelector(".postsContainer"); // <-- add this
-
-  if (!postsContainer) return;
-
-  postsContainer.innerHTML = `
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <p class="text-red-500">Failed to load posts. Make sure you are logged in.</p>
-        </div>
-    `;
-
-  // return user to login page
-  setTimeout(() => {
-    window.location.href = "../../";
-  }, 2000);
-}
