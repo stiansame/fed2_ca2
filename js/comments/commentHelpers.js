@@ -26,16 +26,11 @@ export function createCommentElement(comment, currentUser) {
           comment.created
         )}</span>
         <p class="text-gray-800 mt-2">${comment.body}</p>
-        <div class="mt-2 flex items-center space-x-4">
+        <div class="mt-2 flex items-center justify-between w-full px-4">
           <button class="reply-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${
             comment.id
           }" data-post-id="${comment.postId}">
             <i data-feather="message-square" class="h-3 w-3 inline"></i> Reply
-          </button>
-          <button class="edit-comment-btn text-xs text-gray-600 hover:text-blue-700 hidden" data-comment-id="${
-            comment.id
-          }">
-            <i data-feather="edit" class="h-3 w-3 inline"></i> Edit
           </button>
           <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700 hidden" data-comment-id="${
             comment.id
@@ -72,24 +67,13 @@ export function createReplyElement(reply, currentUser) {
           reply.author?.avatar?.url
         }" class="h-full w-full rounded-full object-cover" />
       </div>
-      <div>
+      <div class="w-full px-4">
         <h5 class="font-medium text-sm">${reply.author?.name || "Unknown"}</h5>
         <span class="text-xs text-gray-500">${formatTimeAgo(
           reply.created
         )}</span>
         <p class="text-gray-800 text-sm mt-1">${reply.body}</p>
-        <div class="mt-1 flex items-center space-x-4">
-          <button class="like-comment-btn text-xs text-gray-600 hover:text-blue-700" data-comment-id="${
-            reply.id
-          }">
-            <i data-feather="heart" class="h-3 w-3 inline"></i>
-            <span>${reply._count?.reactions || 0}</span> Like
-          </button>
-          <button class="edit-comment-btn text-xs text-gray-600 hover:text-blue-700 hidden" data-comment-id="${
-            reply.id
-          }">
-            <i data-feather="edit" class="h-3 w-3 inline"></i> Edit
-          </button>
+        <div class="mt-2 flex justify-end w-full px-4">
           <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700 hidden" data-comment-id="${
             reply.id
           }">
