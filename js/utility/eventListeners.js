@@ -1,5 +1,7 @@
 import { displayNotification } from "./displayUserNotifications.js";
 import { createLikeButtonHandler } from "./handlers/likeHandlers.js";
+import { deleteComment } from "../posts/apiService.js";
+import { refreshAll } from "../utility/handlers/refreshAll.js";
 
 /**
  * Attaches event listeners to the post card's interactive buttons.
@@ -77,13 +79,18 @@ export function addCommentEventListeners(container) {
   // Delete buttons
   container.querySelectorAll(".delete-comment-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
+      const postId = e.currentTarget.dataset.postId;
       const commentId = e.currentTarget.dataset.commentId;
+      console.log(postId, commentId);
       if (confirm("Are you sure you want to delete this comment?")) {
-        // Would normally call API to delete
+        //Call delte function
+        deleteComment(postId, commentId);
+
+        //Display Info
         displayNotification("Comment deleted", "warning");
-        // Remove the comment element
-        const commentEl = btn.closest(`[data-comment-id="${commentId}"]`);
-        commentEl.remove();
+
+        // reload Post
+        refreshAll(postId);
       }
     });
   });

@@ -34,7 +34,8 @@ export function createCommentElement(comment, currentUser) {
           </button>
           <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700 hidden" data-comment-id="${
             comment.id
-          }">
+          }"
+          data-post-id="${comment.postId}">
             <i data-feather="trash-2" class="h-3 w-3 inline"></i> Delete
           </button>
         </div>
@@ -76,7 +77,8 @@ export function createReplyElement(reply, currentUser) {
         <div class="mt-2 flex justify-end w-full px-4">
           <button class="delete-comment-btn text-xs text-gray-600 hover:text-red-700 hidden" data-comment-id="${
             reply.id
-          }">
+          }"
+          data-post-id="${reply.postId}">
             <i data-feather="trash-2" class="h-3 w-3 inline"></i> Delete
           </button>
         </div>

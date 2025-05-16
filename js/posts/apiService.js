@@ -2,7 +2,7 @@ import { apiGet } from "../api/getAPI.js";
 import { PROFILES } from "../api/apiEndpoints.js";
 import { apiPut } from "../api/putAPI.js";
 import { apiPost } from "../api/postAPI.js";
-import { sanitizeHtml } from "../utility/sanitizer.js";
+import { apiDelete } from "../api/deleteAPI.js";
 
 /**
  * Fetches post data by ID
@@ -144,5 +144,14 @@ export async function postComment(postId, replyToId = null, contentValue) {
   } catch (error) {
     console.error("Failed to post comment", error);
     throw error;
+  }
+}
+
+export function deleteComment(postId, commentId) {
+  try {
+    apiDelete(`/social/posts/${postId}/comment/${commentId}`);
+    console.log("Post", postId, "Comment:", commentId);
+  } catch (error) {
+    console.error("Failed to delete comment", error);
   }
 }
