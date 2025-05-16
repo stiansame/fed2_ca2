@@ -59,32 +59,33 @@ export async function checkOwnership(type, data, buttonElement) {
 
   return isOwner;
 }
-/* 
-// function to check ownership
-export async function checkOwnership(type, data) {
-  const loggedInUser = await fetchCurrentUser();
 
-  if (!loggedInUser) {
-    console.error("No logged-in user found.");
-    return;
-  }
+export async function checkLoginAndRoute() {
+  const currentUser = await fetchCurrentUser();
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
 
-  if (type === "post") {
-    if (data.author && data.author.name === loggedInUser.name) {
-      // For post, show the edit button
-      document.getElementById("editPostBtn").classList.remove("hidden");
-    } else {
-      document.getElementById("editPostBtn").classList.add("hidden");
-    }
-  } else if (type === "profile") {
-    if (data.name === loggedInUser.name) {
-      // For profile, show the edit button
-      document.getElementById("openProfileModalBtn").classList.remove("hidden");
-    } else {
-      document.getElementById("openProfileModalBtn").classList.add("hidden");
-    }
+  if (currentUser && currentUser !== "undefined") {
+    // User is logged in, just update menu
+    if (loginBtn) loginBtn.classList.add("hidden");
+    if (logoutBtn) logoutBtn.classList.remove("hidden");
   } else {
-    console.error("Invalid type provided. Must be 'post' or 'profile'.");
+    // Not logged in, redirect to login (unless already there)
+    if (!window.location.pathname.includes("login")) {
+      window.location.href = "../login/index.html";
+      return;
+    }
+    if (logoutBtn) logoutBtn.classList.add("hidden");
+    if (loginBtn) loginBtn.classList.remove("hidden");
   }
 }
- */
+
+//LOGOUT
+export function logout() {
+  if (confirm("Are you sure you want to logout?")) {
+    // Remove profile and accessToken from localStorage
+    localStorage.removeItem("profile");
+    localStorage.removeItem("accessToken");
+    window.location.reload();
+  }
+}

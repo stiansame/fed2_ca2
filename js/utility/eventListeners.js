@@ -82,7 +82,7 @@ export function addCommentEventListeners(container) {
       const postId = e.currentTarget.dataset.postId;
       const commentId = e.currentTarget.dataset.commentId;
       if (confirm("Are you sure you want to delete this comment?")) {
-        //Call delte function
+        //Call delete function
         deleteComment(postId, commentId);
 
         //Display Info
