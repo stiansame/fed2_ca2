@@ -29,3 +29,10 @@ document.addEventListener("click", (event) => {
     menuButton.click();
   }
 });
+
+// check if returned from deleted post
+if (sessionStorage.getItem("reloadOnBack")) {
+  sessionStorage.removeItem("reloadOnBack");
+  window.location.reload();
+  console.log("reloaded");
+}

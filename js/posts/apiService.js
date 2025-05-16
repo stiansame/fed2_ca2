@@ -155,3 +155,12 @@ export function deleteComment(postId, commentId) {
     console.error("Failed to delete comment", error);
   }
 }
+
+export function deletePost(postId) {
+  try {
+    apiDelete(`/social/posts/${postId}`);
+    console.log("Post", postId);
+  } catch (error) {
+    console.error("Failed to delete comment", error);
+  }
+}

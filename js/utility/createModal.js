@@ -22,6 +22,10 @@
  * });
  */
 
+import { deletePost } from "../posts/apiService.js";
+import { getUrlParam } from "./urlHandler.js";
+import { displayNotification } from "./displayUserNotifications.js";
+
 export function createModal({
   openButtonSelector, // can be a selector string (class, attribute, or #id)
   modalId,
@@ -93,6 +97,29 @@ export function createModal({
   modal.addEventListener("click", (e) => {
     if (e.target === modal) {
       closeModal();
+    }
+  });
+
+  //deletebutton listener
+  modal.addEventListener("click", (e) => {
+    if (form && e.target.matches("#deletePostBtn")) {
+      const postId = getUrlParam("id");
+      if (confirm("Are you sure you want to delete this post?")) {
+        closeModal();
+        //call delete function
+        deletePost(postId);
+
+        //Display Info
+        setTimeout(() => {
+          displayNotification("Post deleted", "warning");
+        }, 1500);
+      }
+
+      //Go back to previous page and reload
+      sessionStorage.setItem("reloadOnBack", "true");
+      setTimeout(() => {
+        window.history.back();
+      }, 3000);
     }
   });
 

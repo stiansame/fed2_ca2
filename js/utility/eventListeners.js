@@ -81,7 +81,6 @@ export function addCommentEventListeners(container) {
     btn.addEventListener("click", (e) => {
       const postId = e.currentTarget.dataset.postId;
       const commentId = e.currentTarget.dataset.commentId;
-      console.log(postId, commentId);
       if (confirm("Are you sure you want to delete this comment?")) {
         //Call delte function
         deleteComment(postId, commentId);
