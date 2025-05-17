@@ -1,7 +1,11 @@
 import { checkLoginAndRoute, logout } from "./user/userChecks.js";
+import { initScrollToTopButton } from "./ui/toTopBtn.js";
 
 //Check if user is Logged in
 checkLoginAndRoute();
+
+// scrollbutton
+initScrollToTopButton();
 
 // Mobile menu toggle functionality
 const menuButton = document.getElementById("menuButton");
