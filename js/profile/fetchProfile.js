@@ -6,6 +6,7 @@ import { profileUpdater } from "./updateProfile.js";
 import { renderPosts } from "../posts/renderAllposts.js";
 import { checkOwnership } from "../user/userChecks.js";
 import { fetchPostsByProfile } from "../posts/apiService.js";
+import { setupFollowButton } from "../utility/handlers/followProfile.js";
 
 // Get the logged-in user data
 const loggedInUser = getFromLocalStorage("profile");
@@ -56,6 +57,14 @@ async function fetchSingleProfile() {
     });
 
     const profileData = response.data;
+    // here is the log
+    console.log(
+      "Profile:",
+      profileData.name,
+      "followers:",
+      profileData.followers
+    );
+    console.log("Logged in user:", loggedInUser.name);
 
     //Get all posts by profile
     const profilePosts = await fetchPostsByProfile(userName);
@@ -65,6 +74,16 @@ async function fetchSingleProfile() {
 
     // Render the profile with the fetched data
     renderProfile(profileData);
+
+    //Check and alter follow state
+    const followersArray = profileData.followers;
+
+    setupFollowButton({
+      btnId: "followProfileBtn",
+      profileName: profileData.name,
+      userName: loggedInUser.name,
+      followersArray,
+    });
 
     // Check if the current user owns the profile and display edit button
     const editBtn = document.getElementById("editProfileBtn");

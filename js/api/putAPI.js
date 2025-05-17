@@ -2,32 +2,35 @@ import { API_BASE } from "./apiEndpoints.js";
 import { getFromLocalStorage } from "../user/localStorage.js";
 import { socialKey } from "./apiKeys.js";
 
-export async function apiPut(endpoint, body = {}) {
+export async function apiPut(endpoint, body) {
   try {
-    //construct full URL
     const url = new URL(API_BASE + endpoint);
 
-    //check for/get accessToken from LocalStorage
     const token = getFromLocalStorage("accessToken");
     if (!token) {
       throw new Error("Authentication required but no token found");
     }
-    //Define Headers
+
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
       "x-noroff-api-key": socialKey,
     };
 
-    //make fetch request
-    const response = await fetch(url, {
+    // Build the fetch options
+    const options = {
       method: "PUT",
       headers,
-      body: JSON.stringify(body),
-    });
+    };
+
+    // Only add body if explicitly provided AND not undefined/null
+    if (body !== undefined && body !== null) {
+      options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(url, options);
     console.log(response);
 
-    //basic error handling
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);
       const message =
@@ -40,7 +43,12 @@ export async function apiPut(endpoint, body = {}) {
       throw new Error(message);
     }
 
-    return await response.json();
+    // Some endpoints may return no body
+    try {
+      return await response.json();
+    } catch {
+      return null;
+    }
   } catch (error) {
     console.error("API Request Error:", error);
     throw error;
