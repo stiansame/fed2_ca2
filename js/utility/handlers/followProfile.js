@@ -1,4 +1,6 @@
 import { apiPut } from "../../api/putAPI.js";
+import { refreshAll } from "./refreshAll.js";
+import { fetchProfileData } from "../../posts/apiService.js";
 
 /**
  *
@@ -19,6 +21,7 @@ export async function setupFollowButton({
   profileName,
   userName,
   followersArray,
+  onFollowChange,
   endpoints = {
     follow: `/social/profiles/${profileName}/follow`,
     unfollow: `/social/profiles/${profileName}/unfollow`,
@@ -84,6 +87,10 @@ export async function setupFollowButton({
       await apiPut(url);
       following = !following;
       following ? setBtnFollowing() : setBtnFollow();
+
+      if (onFollowChange) {
+        await onFollowChange();
+      }
     } catch (error) {
       console.error("Something went wrong", error);
       following ? setBtnFollowing() : setBtnFollow();

@@ -1,17 +1,36 @@
-import { fetchPost, postComment } from "../../posts/apiService.js";
+import {
+  fetchPost,
+  postComment,
+  fetchProfileData,
+} from "../../posts/apiService.js";
 import { renderComments } from "../../comments/commentRenderer.js";
 import { createModal } from "../createModal.js";
 import { createPostCard } from "../../posts/postRenderer.js";
+import { setupFollowButton } from "./followProfile.js";
 
-export async function refreshAll(postId, currentUser, followerCount) {
+export async function refreshAll(postId, currentUser) {
   //Fetch the updated post data (includes updated comments & reactions)
   const updatedPost = await fetchPost(postId);
+
+  // Fetch the updated profile for accurate follower count
+  const updatedProfile = await fetchProfileData(updatedPost.author.name);
+  const followerCount = updatedProfile._count.followers;
+  const followersArray = updatedProfile.followers;
 
   // Re-render the post card (update counters, reactions, etc.)
   const postCardContainer = document.getElementById("singlePostDiv");
   postCardContainer.innerHTML = "";
   const newPostCard = createPostCard(updatedPost, followerCount);
   postCardContainer.appendChild(newPostCard);
+
+  //Re-initialize the follow button with fresh data
+  setupFollowButton({
+    btnId: "followBtn",
+    profileName: updatedPost.author.name,
+    userName: currentUser,
+    followersArray: followersArray,
+    onFollowChange: () => refreshAll(postId, currentUser),
+  });
 
   //Call comment modal
   let currentPostId = null;

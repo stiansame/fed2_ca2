@@ -44,9 +44,6 @@ export function createPostCard(postData, followerCount) {
   const postDate = new Date(created).toLocaleDateString();
   document.title = `FEDS | ${title}`;
 
-  //LOGGING
-  console.log("POSTDATA:", postData);
-
   // Root container
   const card = document.createElement("div");
   card.className =
@@ -122,7 +119,7 @@ export function createPostCard(postData, followerCount) {
   const followBtn = document.createElement("button");
   followBtn.className =
     "ml-auto px-3 py-1 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50 flex items-center gap-1";
-  followBtn.id = "followPosterBtn";
+  followBtn.id = "followBtn";
   followBtn.innerHTML = `<i data-feather="user-plus" class="h-3 w-3"></i><span>Follow</span>`;
 
   authorSection.appendChild(avatarWrapper);

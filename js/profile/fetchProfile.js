@@ -83,6 +83,7 @@ async function fetchSingleProfile() {
       profileName: profileData.name,
       userName: loggedInUser.name,
       followersArray,
+      onFollowChange: fetchSingleProfile,
     });
 
     // Check if the current user owns the profile and display edit button

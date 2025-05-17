@@ -49,7 +49,6 @@ async function initPage() {
     // Get profile data
     const profileData = await fetchProfileData(postProfile);
     followerCount = profileData._count?.followers || 0;
-    console.log(profileData);
 
     // Render post
     const container = document.getElementById("singlePostDiv");
@@ -64,12 +63,14 @@ async function initPage() {
     //Check and alter follow state
     const userName = getFromLocalStorage("profile")?.name;
     const followersArray = profileData.followers;
-    console.log(userName);
+    console.log(profileData);
+
     setupFollowButton({
-      btnId: "followPosterBtn",
+      btnId: "followBtn",
       profileName: profileData.name,
       userName,
       followersArray,
+      onFollowChange: () => refreshAll(postId, userName),
     });
 
     // Modals
