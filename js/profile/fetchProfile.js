@@ -47,9 +47,6 @@ async function fetchSingleProfile() {
       renderErrorState();
       return;
     }
-
-    console.log(`Fetching profile for: ${userName}`);
-
     const response = await apiGet(`${PROFILES}/${userName}`, {
       _following: true,
       _followers: true,
@@ -57,14 +54,6 @@ async function fetchSingleProfile() {
     });
 
     const profileData = response.data;
-    // here is the log
-    console.log(
-      "Profile:",
-      profileData.name,
-      "followers:",
-      profileData.followers
-    );
-    console.log("Logged in user:", loggedInUser.name);
 
     //Get all posts by profile
     const profilePosts = await fetchPostsByProfile(userName);

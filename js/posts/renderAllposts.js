@@ -1,5 +1,8 @@
 import { truncateTextAtWordBoundary } from "../utility/textTruncater.js";
-import { formatTimeAgo } from "../utility/dateFormatter.js"; // Importing the function
+import { formatTimeAgo } from "../utility/dateFormatter.js";
+import { isReacted } from "../utility/handlers/postHandlers.js";
+import { createLikeButtonHandler } from "../utility/handlers/likeHandlers.js";
+import { findHeartIcon } from "../utility/handlers/findReactions.js";
 
 export function renderPosts(
   posts,
@@ -10,10 +13,7 @@ export function renderPosts(
     console.error("renderPosts: No container element provided or found.");
     return;
   }
-  const {
-    containerLayout = "column", // 'column' or 'grid'
-    cardLayout = "responsive", // 'stacked' or 'responsive'
-  } = options;
+  const { containerLayout = "column", cardLayout = "responsive" } = options;
 
   // PAGE layout
   container.innerHTML = "";
@@ -26,7 +26,7 @@ export function renderPosts(
   posts.forEach((post, index) => {
     const card = document.createElement("div");
     card.className = `
-      post-card grid bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden 
+      card grid bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden 
       transform duration-300 hover:scale-103 hover:rotate-1 cursor-pointer 
       ${cardLayout === "responsive" ? "md:grid-cols-2" : "grid-cols-1"} 
       ${index < posts.length - 1 ? "mb-4" : ""}
@@ -36,17 +36,16 @@ export function renderPosts(
 
     card.dataset.url = `/post/single.html?id=${post.id}`;
 
-    // Ensure created exists and is valid
+    // Set up author/date info
     const postDate = post.created
       ? formatTimeAgo(post.created)
       : "Unknown date";
-
-    // Modify author info based on layout
     const authorInfo =
       containerLayout === "grid"
-        ? `${postDate}` // Only show date when layout is "grid"
-        : `By ${post.author?.name || "Unknown"} <em>${postDate}</em>`; // Show both author and date for "column" layout
+        ? `${postDate}`
+        : `By ${post.author?.name || "Unknown"} <em>${postDate}</em>`;
 
+    // -- Like button: add id="postLikeBtn" and class "like-btn", count span --
     card.innerHTML = `
       <!-- Image Wrapper -->
       <div class="image-wrapper h-48 md:h-full relative overflow-hidden" style="padding-top: 75%;">
@@ -57,14 +56,12 @@ export function renderPosts(
           class="image w-full h-full object-cover absolute top-0 left-0"
         >
       </div>
-
-      <!-- Content -->
       <div class="flex flex-col">
         <div class="p-4">
           <h3 class="text-lg font-semibold text-gray-800">
             ${post.title || "Untitled"}
           </h3>
-          <p class="text-xs text-gray-500 mb-2">${authorInfo}</p> <!-- Updated to only show date in grid layout -->
+          <p class="text-xs text-gray-500 mb-2">${authorInfo}</p>
           <div class="prose max-w-none">
             <p class="test-sm text-gray-700 whitespace-pre-line" style="white-space: normal;">
               ${
@@ -74,8 +71,6 @@ export function renderPosts(
             </p>
           </div>
         </div>
-
-        <!-- Tags -->
         <div class="p-4">
           <div class="flex flex-wrap gap-2">
             ${
@@ -92,14 +87,12 @@ export function renderPosts(
             }
           </div>
         </div>
-
-        <!-- Reactions -->
         <div class="p-4 border-t mt-auto">
           <div class="flex justify-between items-center">
             <div class="flex gap-4">
-              <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800" type="button">
+              <button id="postLikeBtn" class="like-btn flex items-center gap-1 text-gray-600 hover:text-gray-800" type="button">
                 <i data-feather="heart" class="h-4 w-4"></i>
-                ${post._count?.reactions ?? 0}
+                <span class="like-count">${post._count?.reactions ?? 0}</span>
               </button>
               <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800" type="button">
                 <i data-feather="message-circle" class="h-4 w-4"></i>
@@ -120,10 +113,24 @@ export function renderPosts(
     `;
 
     container.appendChild(card);
+
+    // ---- SET LIKED STATE ON LOAD ----
+    if (window.feather) window.feather.replace({ elements: [card] });
+
+    isReacted(card, post);
+
+    // ---- ATTACH TOGGLE HANDLER ----
+    const likeBtn = card.querySelector("#postLikeBtn");
+    if (likeBtn) {
+      likeBtn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevents the card click from firing
+        createLikeButtonHandler(card, post.id)();
+      });
+    }
   });
 
-  // Make cards clickable
-  container.querySelectorAll(".post-card").forEach((card) => {
+  // Make cards clickable (but not when a button or link inside is clicked)
+  container.querySelectorAll(".card").forEach((card) => {
     card.addEventListener("click", (e) => {
       if (e.target.closest("button") || e.target.closest("a")) return;
       const url = card.dataset.url;

@@ -3,7 +3,6 @@ import { createModal } from "./utility/createModal.js";
 import { newPost } from "./posts/newPost.js";
 import { updateCount } from "./utility/textCounter.js";
 import { renderPosts } from "./posts/renderAllposts.js";
-import { isReacted } from "./utility/handlers/postHandlers.js";
 import { fetchCurrentUser } from "./user/userChecks.js";
 
 // define state
@@ -47,6 +46,7 @@ async function fetchAndRenderPosts(loadMoreBtn) {
       limit,
       page,
       _author: true,
+      _reactions: true,
       sort: "created",
       sortOrder: "desc",
     });
@@ -56,6 +56,8 @@ async function fetchAndRenderPosts(loadMoreBtn) {
       containerLayout: "column",
       cardLayout: "responsive",
     });
+
+    console.log(postData);
 
     // show/hide Load More
     if (newPosts.length === limit) {

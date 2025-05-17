@@ -17,7 +17,6 @@ export async function isReacted(card, postData) {
     const reacted = hasReacted(postData, currentUserName);
 
     // Get the like count from the post data
-    // Assuming postData has a likeCount property
     const likeCount = postData._count.reactions || 0;
 
     // Find and update the heart icon

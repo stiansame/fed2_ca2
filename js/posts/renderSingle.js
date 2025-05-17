@@ -46,6 +46,9 @@ async function initPage() {
     postData = await fetchPost(postId);
     const postProfile = postData.author.name;
 
+    // LOGGING
+    console.log(postData);
+
     // Get profile data
     const profileData = await fetchProfileData(postProfile);
     followerCount = profileData._count?.followers || 0;

@@ -30,13 +30,13 @@ export function createLikeButtonHandler(card, postId) {
         originalPost.reactions?.flatMap((r) => r.reactors) || [];
       const wasReacted = originalReactors.includes(username);
 
-      // Toggle the reaction (use ❤️ for simplicity)
+      // Always use /react/{reaction}
       const reaction = "❤️";
-      const toggleUrl = wasReacted
-        ? `/social/posts/${postId}/unreact/${reaction}` // If user reacted, remove it
-        : `/social/posts/${postId}/react/${reaction}`; // If user hasn't reacted, add it
+      const toggleUrl = `/social/posts/${postId}/react/${reaction}`;
+      console.log("PUT Reaction URL:", toggleUrl); // Log for debugging
 
-      const response = await apiPut(toggleUrl);
+      // API toggles the reaction for you
+      const response = await apiPut(toggleUrl, {});
 
       // Fetch the updated post data after the toggle
       const updatedPost = response.data;
@@ -51,7 +51,7 @@ export function createLikeButtonHandler(card, postId) {
       const updatedReacted = updatedReactors.includes(username);
 
       // Update the heart icon based on the new reaction status
-      updateHeartIcon(iconElement, updatedReacted); // Icon should show 'liked' if now reacted
+      updateHeartIcon(iconElement, updatedReacted);
 
       // Update the like count display
       const countElement = card.querySelector(".like-count");
@@ -62,7 +62,7 @@ export function createLikeButtonHandler(card, postId) {
       // Return the updated result
       return {
         totalReactions,
-        wasReacted: updatedReacted, // Return the actual reaction status after update
+        wasReacted: updatedReacted,
       };
     } catch (error) {
       console.error("Error fetching post reaction data:", error);
