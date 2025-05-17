@@ -14,6 +14,8 @@ import { isReacted } from "../utility/handlers/postHandlers.js";
 import { createModal } from "../utility/createModal.js";
 import { checkOwnership } from "../user/userChecks.js";
 import { refreshAll } from "../utility/handlers/refreshAll.js";
+import { getFromLocalStorage } from "../user/localStorage.js";
+import { setupFollowButton } from "../utility/handlers/followProfile.js";
 
 // Global state
 let postData = null;
@@ -47,6 +49,7 @@ async function initPage() {
     // Get profile data
     const profileData = await fetchProfileData(postProfile);
     followerCount = profileData._count?.followers || 0;
+    console.log(profileData);
 
     // Render post
     const container = document.getElementById("singlePostDiv");
@@ -57,6 +60,17 @@ async function initPage() {
     // Check if the current user owns the post and display edit button
     const editBtn = document.getElementById("editPostBtn");
     await checkOwnership("post", postData, editBtn);
+
+    //Check and alter follow state
+    const userName = getFromLocalStorage("profile")?.name;
+    const followersArray = profileData.followers;
+    console.log(userName);
+    setupFollowButton({
+      btnId: "followPosterBtn",
+      profileName: profileData.name,
+      userName,
+      followersArray,
+    });
 
     // Modals
 
