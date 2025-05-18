@@ -9,7 +9,9 @@ import { fetchPostsByProfile } from "../posts/apiService.js";
 import { setupFollowButton } from "../utility/handlers/followProfile.js";
 
 // Get the logged-in user data
-const loggedInUser = getFromLocalStorage("profile");
+const loggedInUser = getFromLocalStorage("profile") || {};
+const { name: loggedInUserName } = loggedInUser;
+
 const postsContainer = document.querySelector(".postsContainer");
 
 // Elements to update with profile data
@@ -19,7 +21,7 @@ const bannerUrl = document.getElementById("bannerUrl");
 const avatarUrl = document.getElementById("avatarUrl");
 const bannerImage = document.getElementById("profileBannerImg");
 const profileName = document.querySelector("main h1");
-const userName = document.getElementById("name");
+const userNameInput = document.getElementById("name");
 const userMail = document.getElementById("email");
 const userBio = document.getElementById("bio");
 const profileBio = document.getElementById("profileBio");
@@ -35,51 +37,49 @@ const statsContainers = document.querySelectorAll(
  */
 async function fetchSingleProfile() {
   try {
-    // Get the username from the URL parameter
     const urlParams = new URLSearchParams(window.location.search);
     const profileNameFromUrl = urlParams.get("username");
 
-    // If the profileNameFromUrl is null, fallback to logged-in user's name from localStorage
-    const userName = profileNameFromUrl || (loggedInUser && loggedInUser.name);
+    // Prefer URL param, fallback to localStorage
+    const userName = profileNameFromUrl || loggedInUserName;
 
     if (!userName) {
       console.error("No username found in URL or localStorage");
       renderErrorState();
       return;
     }
-    const response = await apiGet(`${PROFILES}/${userName}`, {
+
+    // Destructure data from response
+    const { data: profileData } = await apiGet(`${PROFILES}/${userName}`, {
       _following: true,
       _followers: true,
       _posts: true,
     });
 
-    const profileData = response.data;
-
-    //Get all posts by profile
+    // Fetch posts by profile
     const profilePosts = await fetchPostsByProfile(userName);
 
-    // Update page title with the fetched profile's name
+    // Update page title
     document.title = `FEDS profile | ${profileData.name}`;
 
-    // Render the profile with the fetched data
+    // Render the profile
     renderProfile(profileData);
 
-    //Check and alter follow state
-    const followersArray = profileData.followers;
-
+    // Setup follow button
+    const { followers } = profileData;
     setupFollowButton({
       btnId: "followProfileBtn",
       profileName: profileData.name,
-      userName: loggedInUser.name,
-      followersArray,
+      userName: loggedInUserName,
+      followersArray: followers,
       onFollowChange: fetchSingleProfile,
     });
 
-    // Check if the current user owns the profile and display edit button
+    // Check ownership and show edit button if applicable
     const editBtn = document.getElementById("editProfileBtn");
     await checkOwnership("profile", profileData, editBtn);
 
-    //call edit Profile Modal
+    // Setup modal and profile updater
     createModal({
       openButtonSelector: "#editProfileBtn",
       modalId: "profileModal",
@@ -88,7 +88,7 @@ async function fetchSingleProfile() {
 
     profileUpdater();
 
-    // Render the posts associated with the profile
+    // Render posts
     if (profilePosts && profilePosts.length > 0) {
       renderPosts(profilePosts, undefined, {
         containerLayout: "grid",
@@ -105,49 +105,53 @@ async function fetchSingleProfile() {
 
 /**
  * Renders the profile information
- * @param {Object} profile - The profile data
+ * @param {Object} profile
  */
 function renderProfile(profile) {
-  // Update profile image if available
-  if (profile.avatar) {
-    profileImage.src = profile.avatar.url;
-    currentAvatar.src = profile.avatar.url;
-    avatarUrl.value = profile.avatar.url;
+  // Destructure needed fields from profile
+  const {
+    avatar,
+    banner,
+    name = "Unknown User",
+    email = "",
+    bio = "",
+    posts = [],
+    _count = {},
+    isFollowing = false,
+  } = profile;
+
+  // Destructure _count
+  const { followers = 0, following = 0 } = _count;
+
+  // Avatar
+  if (avatar?.url) {
+    profileImage.src = avatar.url;
+    currentAvatar.src = avatar.url;
+    avatarUrl.value = avatar.url;
   }
 
-  //update profile banner image if available
-  if (profile.banner) {
-    bannerImage.src = profile.banner.url;
-    bannerUrl.value = profile.banner.url;
+  // Banner
+  if (banner?.url) {
+    bannerImage.src = banner.url;
+    bannerUrl.value = banner.url;
   }
 
-  // Update profile name and email
-  profileName.textContent = profile.name || "Unknown User";
-  userName.value = profile.name;
-  userMail.value = profile.email;
+  // Name, email, bio
+  profileName.textContent = name;
+  userNameInput.value = name;
+  userMail.value = email;
+  profileBio.textContent = bio;
+  userBio.value = bio;
 
-  //Update profile Bio
-  profileBio.textContent = profile.bio;
-  userBio.value = profile.bio;
-
-  // Update stats
+  // Stats
   if (statsContainers.length >= 3) {
-    // Posts count
-    statsContainers[0].querySelector(".block").textContent = profile.posts
-      ? profile.posts.length
-      : 0;
-
-    // Followers count
-    statsContainers[1].querySelector(".block").textContent =
-      profile._count?.followers || 0;
-
-    // Following count
-    statsContainers[2].querySelector(".block").textContent =
-      profile._count?.following || 0;
+    statsContainers[0].querySelector(".block").textContent = posts.length;
+    statsContainers[1].querySelector(".block").textContent = followers;
+    statsContainers[2].querySelector(".block").textContent = following;
   }
 
-  // Update follow button state if needed
-  if (profile.isFollowing) {
+  // Follow button state
+  if (isFollowing) {
     followButton.textContent = "Following";
     followButton.classList.remove("bg-blue-700", "hover:bg-blue-900");
     followButton.classList.add("bg-gray-500", "hover:bg-gray-700");
@@ -155,66 +159,48 @@ function renderProfile(profile) {
     followButton.querySelector("span").textContent = "Follow";
   }
 
-  // Add event listener to follow button
+  // Add follow toggle event
   followButton.addEventListener("click", () => toggleFollow(profile));
 }
 
 /**
- * Shows or hides the edit button based on whether the profile belongs to the logged-in user
- * @param {boolean} isOwnProfile - Whether this is the user's own profile
+ * Shows or hides the edit button based on ownership
+ * @param {boolean} isOwnProfile
  */
 function toggleEditButton(isOwnProfile) {
   if (editButton) {
-    if (isOwnProfile) {
-      editButton.classList.remove("hidden");
-    } else {
-      editButton.classList.add("hidden");
-    }
+    editButton.classList.toggle("hidden", !isOwnProfile);
   }
 }
 
 function renderNoPosts() {
   postsContainer.innerHTML = `
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <p class="text-gray-600">No posts yet.</p>
-        </div>
-    `;
+    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+      <p class="text-gray-600">No posts yet.</p>
+    </div>
+  `;
 }
 
 /**
  * Renders an error state when profile fetching fails
  */
 function renderErrorState() {
-  // Update profile section with error
   profileName.textContent =
     "Error loading profile - make sure you are logged in!";
 
-  // Hide edit button in error state
   if (editButton) {
     editButton.classList.add("hidden");
   }
 
-  // Display error message in posts section
   postsContainer.innerHTML = `
-        <div class="bg-white rounded-lg shadow-md p-6 text-center">
-            <p class="text-red-500">Failed to load profile data. Make sure you are logged in.</p>
-        </div>
-    `;
+    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+      <p class="text-red-500">Failed to load profile data. Make sure you are logged in.</p>
+    </div>
+  `;
 
-  // return user to login page
   setTimeout(() => {
     window.location.href = "../../";
   }, 2000);
-}
-
-/**
- * Toggles following status for a profile
- * @param {Object} profile - The profile to follow/unfollow
- */
-async function toggleFollow(profile) {
-  // Implementation would go here (not part of the current code)
-  console.log("Toggle follow for:", profile.name);
-  // This would typically make an API call to follow/unfollow
 }
 
 // Initialize the page

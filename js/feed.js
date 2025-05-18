@@ -5,18 +5,33 @@ import { updateCount } from "./utility/textCounter.js";
 import { renderPosts } from "./posts/renderAllposts.js";
 import { fetchCurrentUser } from "./user/userChecks.js";
 
-// define state
+// ---- FEED STATE ----
 let postData = [];
 let page = 1;
 const limit = 10;
 let isLoading = false;
 let currentFilter = "fedsPosts";
-
-// Filter URLs...
-const fedsFilterUrl = "/social/posts/?_tag=feds";
-const followingFilterUrl = "/social/posts/following";
 let currentUserFilterUrl;
 
+// ---- SEARCH STATE ----
+let searchData = [];
+let searchPage = 1;
+let searchQuery = "";
+let searchIsLoading = false;
+let searchMode = false;
+
+// ---- DOM ELEMENTS ----
+const postsContainer = document.querySelector(".postsContainer");
+const loadMoreBtn = document.getElementById("loadMoreBtn");
+const filterDropdown = document.getElementById("filterBy");
+const feedTitle = document.getElementById("feedTitle");
+const searchInput = document.getElementById("search");
+
+// ---- FILTER URLS ----
+const fedsFilterUrl = "/social/posts/?_tag=feds";
+const followingFilterUrl = "/social/posts/following";
+
+// ---- FETCH AND RENDER POSTS (FEED) ----
 async function fetchAndRenderPosts(loadMoreBtn) {
   if (isLoading) return;
   isLoading = true;
@@ -52,14 +67,11 @@ async function fetchAndRenderPosts(loadMoreBtn) {
     });
 
     postData = [...postData, ...newPosts];
-    renderPosts(postData, undefined, {
+    renderPosts(postData, postsContainer, {
       containerLayout: "column",
       cardLayout: "responsive",
     });
 
-    console.log(postData);
-
-    // show/hide Load More
     if (newPosts.length === limit) {
       loadMoreBtn.style.display = "block";
     } else {
@@ -69,71 +81,133 @@ async function fetchAndRenderPosts(loadMoreBtn) {
     page++;
     newPost();
   } catch (err) {
+    postsContainer.innerHTML = `<div class="text-red-600">Error loading posts.</div>`;
+    loadMoreBtn.style.display = "none";
     console.error("Failed to fetch posts:", err);
-    renderErrorState();
   } finally {
     isLoading = false;
   }
 }
 
+// ---- FETCH AND RENDER POSTS (SEARCH) ----
+async function fetchAndRenderSearch(loadMoreBtn) {
+  if (searchIsLoading) return;
+  searchIsLoading = true;
+
+  try {
+    const { data: newPosts } = await apiGet(
+      `/social/posts/search?q=${encodeURIComponent(searchQuery)}`,
+      {
+        limit,
+        page: searchPage,
+        _author: true,
+        _reactions: true,
+        sort: "created",
+        sortOrder: "desc",
+      }
+    );
+
+    searchData = [...searchData, ...newPosts];
+
+    // Show "No results" message if searchData is empty
+    if (searchData.length === 0) {
+      postsContainer.innerHTML = `<div class="text-gray-500 text-center py-8 w-full">No posts found for "${searchQuery}".</div>`;
+      loadMoreBtn.style.display = "none";
+      return;
+    }
+
+    renderPosts(searchData, postsContainer, {
+      containerLayout: "column",
+      cardLayout: "responsive",
+    });
+
+    if (newPosts.length === limit) {
+      loadMoreBtn.style.display = "block";
+    } else {
+      loadMoreBtn.style.display = "none";
+    }
+
+    searchPage++;
+  } catch (err) {
+    postsContainer.innerHTML = `<div class="text-red-600">Error loading search results.</div>`;
+    loadMoreBtn.style.display = "none";
+    console.error("Failed to fetch search posts:", err);
+  } finally {
+    searchIsLoading = false;
+  }
+}
+
+// ---- SEARCH INPUT HANDLER ----
+searchInput.addEventListener("input", () => {
+  searchQuery = searchInput.value.trim();
+  if (feedTitle) {
+    feedTitle.textContent = searchQuery
+      ? "Search Results"
+      : "Latest Frontend Shitposting";
+  }
+
+  if (!searchQuery) {
+    // Exit search mode, restore normal feed
+    searchMode = false;
+    postData = [];
+    page = 1;
+    fetchAndRenderPosts(loadMoreBtn);
+    return;
+  }
+  // Enter search mode
+  searchMode = true;
+  searchData = [];
+  searchPage = 1;
+  fetchAndRenderSearch(loadMoreBtn);
+});
+
+// ---- LOAD MORE BUTTON HANDLER ----
+loadMoreBtn.addEventListener("click", () => {
+  if (searchMode) {
+    fetchAndRenderSearch(loadMoreBtn);
+  } else {
+    fetchAndRenderPosts(loadMoreBtn);
+  }
+});
+
+// ---- FILTER DROPDOWN HANDLER ----
+if (filterDropdown) {
+  filterDropdown.addEventListener("change", (e) => {
+    currentFilter = e.target.value;
+    if (feedTitle) {
+      const titles = {
+        allPosts: "All Posts",
+        fedsPosts: "Latest Frontend Shitposting",
+        following: "Latest from your followers",
+        yourPosts: "Your Posts",
+      };
+      feedTitle.textContent = titles[currentFilter] || "Feed";
+      document.title = `FEDS feed | ${titles[currentFilter]}`;
+    }
+    postData = [];
+    page = 1;
+    fetchAndRenderPosts(loadMoreBtn);
+  });
+}
+
+// ---- DOMContentLoaded ----
 document.addEventListener("DOMContentLoaded", async () => {
   updateCount("content", "charCount");
-  feather.replace();
+  if (window.feather) feather.replace();
 
   // fetch current user
   const { name: currentUser } = await fetchCurrentUser();
   currentUserFilterUrl = `/social/profiles/${currentUser}/posts`;
 
-  // grab the DOM elements after they’re parsed
-  const loadMoreBtn = document.getElementById("loadMoreBtn");
-  const filterDropdown = document.getElementById("filterBy");
-  const titleEl = document.getElementById("feedTitle");
-
-  // hook up “Load More”
-  loadMoreBtn.addEventListener("click", () => {
-    fetchAndRenderPosts(loadMoreBtn);
-  });
-
-  // Map filter and H1 titles
-  const titles = {
-    allPosts: "All Posts",
-    fedsPosts: "Latest Frontend Shitposting",
-    following: "Latest from your followers",
-    yourPosts: "Your Posts",
-  };
-
-  // hook up filter changes
-  filterDropdown.addEventListener("change", (e) => {
-    currentFilter = e.target.value;
-    titleEl.textContent = titles[currentFilter] || "Feed";
-    document.title = `FEDS feed | ${titles[currentFilter]}`;
-    postData = [];
-    page = 1;
-    fetchAndRenderPosts(loadMoreBtn);
-  });
-
-  // set up modal
-  createModal({
-    openButtonSelector: "#newPostBtn",
-    modalId: "modal",
-    closeButtonId: "closeModal",
-    formId: "newPostForm",
-    onSubmit: ({ form }) => {
-      /* … */
-    },
-  });
-
-  //setup for image preview in Modal
+  // setup for image preview in Modal
   const loadImageBtn = document.getElementById("loadImageBtn");
   const imageUrlInput = document.getElementById("imageUrl");
   const imagePreview = document.getElementById("imagePreview");
-
   if (loadImageBtn && imageUrlInput && imagePreview) {
     loadImageBtn.addEventListener("click", () => {
       const url = imageUrlInput.value.trim();
       imagePreview.innerHTML = ""; // Clear previous
       if (url) {
-        // Create an image element
         const img = document.createElement("img");
         img.src = url;
         img.alt = "Preview";
@@ -147,6 +221,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Initial load
+  // set up modal
+  createModal({
+    openButtonSelector: "#newPostBtn",
+    modalId: "modal",
+    closeButtonId: "closeModal",
+    formId: "newPostForm",
+    onSubmit: ({ form }) => {
+      /* ... */
+    },
+  });
+
+  // Initial feed load
   fetchAndRenderPosts(loadMoreBtn);
 });

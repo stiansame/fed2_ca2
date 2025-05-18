@@ -2,7 +2,6 @@ import { truncateTextAtWordBoundary } from "../utility/textTruncater.js";
 import { formatTimeAgo } from "../utility/dateFormatter.js";
 import { isReacted } from "../utility/handlers/postHandlers.js";
 import { createLikeButtonHandler } from "../utility/handlers/likeHandlers.js";
-import { findHeartIcon } from "../utility/handlers/findReactions.js";
 
 export function renderPosts(
   posts,
@@ -17,7 +16,7 @@ export function renderPosts(
 
   // PAGE layout
   container.innerHTML = "";
-  container.className = `postsContainer ${
+  container.className = `postsContainer min-h-80 ${
     containerLayout === "grid"
       ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
       : "flex flex-col gap-2 px-4 max-w-2xl mx-auto"
