@@ -1,6 +1,5 @@
 import { displayNotification } from "../utility/displayUserNotifications.js";
 import { addPostEventListeners } from "../utility/eventListeners.js";
-import { fetchProfileData } from "./apiService.js";
 
 //modalElements to update
 const editModalPostTitle = document.getElementById("editTitle");
@@ -137,7 +136,7 @@ export function createPostCard(postData, followerCount) {
 
   tags.forEach((tag) => {
     const tagEl = document.createElement("a");
-    tagEl.href = `/tags/${tag}`;
+    tagEl.href = `/feed/index.html?tag=${encodeURIComponent(tag)}`;
     tagEl.className =
       "px-2 py-1 bg-gray-200 text-gray-800 text-xs rounded-full hover:bg-gray-300 transition-colors";
     tagEl.textContent = `#${tag}`;

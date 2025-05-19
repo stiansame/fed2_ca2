@@ -75,8 +75,8 @@ export function renderPosts(
             ${
               post.tags
                 ?.map(
-                  (tag) => `
-              <a href="/tags/${encodeURIComponent(tag)}" 
+                  (tag) => `                  
+              <a href="/feed/index.html?tag=${encodeURIComponent(tag)}" 
                  class="px-2 py-0.5 bg-gray-200 text-gray-800 text-xs rounded-full hover:bg-gray-300 transition-colors">
                 #${tag}
               </a>

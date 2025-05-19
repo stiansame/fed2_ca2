@@ -13,6 +13,15 @@ let isLoading = false;
 let currentFilter = "fedsPosts";
 let currentUserFilterUrl;
 
+// --- TAG FILTER ADDITIONS ---
+let tagFilter = null;
+function getTagFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("tag");
+}
+tagFilter = getTagFromUrl();
+// --- END TAG FILTER ADDITIONS ---
+
 // ---- SEARCH STATE ----
 let searchData = [];
 let searchPage = 1;
@@ -36,24 +45,43 @@ async function fetchAndRenderPosts(loadMoreBtn) {
   if (isLoading) return;
   isLoading = true;
 
-  // pick filter URL
+  // --- TAG FILTER ---
   let filterUrl;
-  switch (currentFilter) {
-    case "fedsPosts":
-      filterUrl = fedsFilterUrl;
-      break;
-    case "following":
-      filterUrl = followingFilterUrl;
-      break;
-    case "yourPosts":
-      filterUrl = currentUserFilterUrl;
-      break;
-    case "allPosts":
-      filterUrl = "/social/posts";
-      break;
-    default:
-      filterUrl = fedsFilterUrl;
-      break;
+  if (tagFilter) {
+    filterUrl = `/social/posts/?_tag=${encodeURIComponent(tagFilter)}`;
+    if (feedTitle) {
+      feedTitle.textContent = `Posts tagged #${tagFilter}`;
+      document.title = `FEDS | #${tagFilter}`;
+    }
+  } else {
+    // pick filter URL
+    switch (currentFilter) {
+      case "fedsPosts":
+        filterUrl = fedsFilterUrl;
+        break;
+      case "following":
+        filterUrl = followingFilterUrl;
+        break;
+      case "yourPosts":
+        filterUrl = currentUserFilterUrl;
+        break;
+      case "allPosts":
+        filterUrl = "/social/posts";
+        break;
+      default:
+        filterUrl = fedsFilterUrl;
+        break;
+    }
+    if (feedTitle && !searchMode) {
+      const titles = {
+        allPosts: "All Posts",
+        fedsPosts: "Latest Frontend Shitposting",
+        following: "Latest from your followers",
+        yourPosts: "Your Posts",
+      };
+      feedTitle.textContent = titles[currentFilter] || "Feed";
+      document.title = `FEDS feed | ${titles[currentFilter]}`;
+    }
   }
 
   try {
@@ -143,12 +171,16 @@ searchInput.addEventListener("input", () => {
   if (feedTitle) {
     feedTitle.textContent = searchQuery
       ? "Search Results"
+      : tagFilter
+      ? `Posts tagged #${tagFilter}`
       : "Latest Frontend Shitposting";
   }
 
   if (!searchQuery) {
     // Exit search mode, restore normal feed
     searchMode = false;
+    searchData = [];
+    searchPage = 1;
     postData = [];
     page = 1;
     fetchAndRenderPosts(loadMoreBtn);
@@ -173,6 +205,15 @@ loadMoreBtn.addEventListener("click", () => {
 // ---- FILTER DROPDOWN HANDLER ----
 if (filterDropdown) {
   filterDropdown.addEventListener("change", (e) => {
+    // --- TAG FILTER  ---
+    tagFilter = null;
+    // Remove 'tag' from URL
+    if (window.history && window.history.replaceState) {
+      const url = new URL(window.location);
+      url.searchParams.delete("tag");
+      window.history.replaceState({}, "", url);
+    }
+
     currentFilter = e.target.value;
     if (feedTitle) {
       const titles = {
