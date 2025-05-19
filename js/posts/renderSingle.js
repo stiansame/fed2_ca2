@@ -4,6 +4,7 @@ import {
   fetchComments,
   updatePost,
   postComment,
+  fetchPostsByProfile,
 } from "./apiService.js";
 import { createPostCard } from "./postRenderer.js";
 import { renderComments } from "../comments/commentRenderer.js";
@@ -45,6 +46,39 @@ async function initPage() {
     // Fetch post data
     postData = await fetchPost(postId);
     const postProfile = postData.author.name;
+
+    // Fetch and display latest 5 posts from author excluding current
+    try {
+      const authorPosts = await fetchPostsByProfile(postProfile);
+      // Exclude the current post
+      const latestPosts = authorPosts
+        .filter((p) => String(p.id) !== String(postId))
+        .slice(0, 5);
+      const list = document.getElementById("authorLatestPosts");
+      if (list) {
+        list.innerHTML = "";
+        if (latestPosts.length === 0) {
+          list.innerHTML = "<li class='text-gray-500'>No other posts.</li>";
+        } else {
+          latestPosts.forEach((post) => {
+            const li = document.createElement("li");
+            li.className = "border-b last:border-b-0 pb-2";
+            li.innerHTML = `
+          <a href="single.html?id=${
+            post.id
+          }" class="text-blue-700 hover:text-blue-900 block text-sm">
+            ${post.title ? post.title : "(Untitled post)"}
+          </a>
+        `;
+            list.appendChild(li);
+          });
+        }
+      }
+    } catch (err) {
+      const list = document.getElementById("authorLatestPosts");
+      if (list)
+        list.innerHTML = "<li class='text-gray-500'>Could not load posts.</li>";
+    }
 
     // LOGGING
     console.log(postData);
