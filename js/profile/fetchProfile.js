@@ -7,6 +7,7 @@ import { renderPosts } from "../posts/renderAllposts.js";
 import { checkOwnership } from "../user/userChecks.js";
 import { fetchPostsByProfile } from "../posts/apiService.js";
 import { setupFollowButton } from "../utility/handlers/followProfile.js";
+import { attachHoverInfoBox } from "../utility/hoverInfoBox.js";
 
 // Get the logged-in user data
 const loggedInUser = getFromLocalStorage("profile") || {};
@@ -150,6 +151,14 @@ function renderProfile(profile) {
     statsContainers[2].querySelector(".block").textContent = following;
   }
 
+  // Select stat containers
+  const followersStat = statsContainers[1];
+  const followingStat = statsContainers[2];
+
+  // Use imported function to add hover info-boxes
+  attachHoverInfoBox(followersStat, profile.followers || [], "Followers");
+  attachHoverInfoBox(followingStat, profile.following || [], "Following");
+
   // Follow button state
   if (isFollowing) {
     followButton.textContent = "Following";
@@ -212,6 +221,3 @@ document.addEventListener("DOMContentLoaded", () => {
     feather.replace();
   }
 });
-
-// Export functions for testing/reuse
-export { fetchSingleProfile, renderProfile, renderPosts };

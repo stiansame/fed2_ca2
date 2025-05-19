@@ -1,5 +1,5 @@
 import { checkLoginAndRoute, logout } from "./user/userChecks.js";
-import { initScrollToTopButton } from "./ui/toTopBtn.js";
+import { initScrollToTopButton } from "./utility/toTopBtn.js";
 
 //Check if user is Logged in
 checkLoginAndRoute();
