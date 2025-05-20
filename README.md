@@ -29,7 +29,6 @@ The following user stories are required for a passing submission:
 ✅ User with @noroff.no or @stud.noroff.no email can register profile
 
 ✅ Registered user can login
-
 ✅ User can view a post content feed
 
 ✅ User can filter the post content feed
