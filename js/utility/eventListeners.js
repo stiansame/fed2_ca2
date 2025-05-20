@@ -24,17 +24,33 @@ export function addPostEventListeners(card, postId, authorName) {
     });
   }
 
-  const followBtn = card.querySelector("#followPosterBtn");
-  if (followBtn) {
-    followBtn.addEventListener("click", () => {
-      displayNotification(`You are now following ${authorName}`, "success");
-    });
-  }
-
   const editBtn = card.querySelector("#editPostBtn");
   if (editBtn) {
     editBtn.addEventListener("click", () => {
       displayNotification("Edit mode activated", "info");
+    });
+  }
+}
+
+export function modalSubmitEventListener(modal) {
+  const updatePostBtn = modal.querySelector("#updatePostBtn");
+  if (updatePostBtn) {
+    updatePostBtn.addEventListener("click", () => {
+      displayNotification("Post updated", "success");
+    });
+  }
+
+  const commentReplyBtn = modal.querySelector("#comment-reply-btn");
+  if (commentReplyBtn) {
+    commentReplyBtn.addEventListener("click", () => {
+      displayNotification("You replied to this comment", "success");
+    });
+  }
+
+  const commentBtn = modal.querySelector("#comment-btn");
+  if (commentBtn) {
+    commentBtn.addEventListener("click", () => {
+      displayNotification("You commented this post", "success");
     });
   }
 }
@@ -44,35 +60,10 @@ export function addPostEventListeners(card, postId, authorName) {
  * @param {HTMLElement} container - Container with comment elements
  */
 export function addCommentEventListeners(container) {
-  // Like buttons
-  container.querySelectorAll(".like-comment-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const commentId = e.currentTarget.dataset.commentId;
-      const countSpan = e.currentTarget.querySelector("span");
-      let count = parseInt(countSpan.textContent);
-
-      // Update count (would normally be done via API)
-      countSpan.textContent = count + 1;
-
-      displayNotification("You liked this comment", "success");
-    });
-  });
-
   // Reply buttons
-  /*   container.querySelectorAll(".reply-comment-btn").forEach((btn) => {
+  commentsContainer.querySelectorAll(".reply-comment-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      const commentId = e.currentTarget.dataset.commentId;
       displayNotification("Reply mode activated", "info");
-      // Would normally create a reply form
-    });
-  }); */
-
-  // Edit buttons
-  container.querySelectorAll(".edit-comment-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const commentId = e.currentTarget.dataset.commentId;
-      displayNotification("Edit mode activated", "info");
-      // Would normally transform the comment into an editable form
     });
   });
 
@@ -89,7 +80,7 @@ export function addCommentEventListeners(container) {
         displayNotification("Comment deleted", "warning");
 
         // reload Post
-        refreshAll(postId);
+        refreshAll(postId, commentId);
       }
     });
   });

@@ -83,7 +83,10 @@
 
                 <!-- Post Content Column -->
                 <div class="md:col-span-8">
+                    <div class="notification my-2" style="display:none"></div>
                     <div class="w-full px-4 py-8">
+
+
                         <!-- Single Post Card -->
                         <div id="singlePostDiv"></div>
 
@@ -178,15 +181,9 @@
         </div>
     </footer>
 
-    <!-- Notification component -->
-    <div id="notification" class="fixed bottom-20 right-4 max-w-md transform transition-transform duration-300 translate-y-full">
-        <div class="bg-blue-400 shadow-lg rounded-md p-4 border-l-4 border-primary">
-            <p id="notificationMessage" class="text-sm"></p>
-        </div>
-    </div>
 
     <!-- Edit Post Modal -->
-    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
+    <div id="editModal" class=" modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
 
         <div class="modal-content bg-white rounded-lg w-full max-w-lg mx-4 transform transition-all duration-200 scale-95 opacity-0">
 
@@ -242,13 +239,16 @@
                         </button>
                     </div>
                 </form>
+                <div class="notification" style="display:none"></div>
+
+
             </div>
         </div>
     </div>
 
 
     <!-- comment Modal -->
-    <div id="commentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
+    <div id="commentModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
         <div class="modal-content bg-white rounded-lg w-full max-w-lg mx-4 transform transition-all duration-200 scale-95 opacity-0">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
@@ -263,17 +263,18 @@
                         <textarea id="commentContent" name="commentContent" rows="3" placeholder="Write your comment..."
                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
-                    <button type="submit" class="w-full px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-900">
+                    <button type="submit" id="comment-btn" class="w-full px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-900">
                         Submit comment
                     </button>
                 </form>
+                <div class="notification" style="display:none"></div>
             </div>
         </div>
     </div>
 
 
     <!-- Reply Modal -->
-    <div id="replyModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
+    <div id="replyModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
         <div class="modal-content bg-white rounded-lg w-full max-w-lg mx-4 transform transition-all duration-200 scale-95 opacity-0">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
@@ -288,10 +289,12 @@
                         <textarea id="replyContent" name="replyContent" rows="3" placeholder="Write your reply..."
                             class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                     </div>
-                    <button type="submit" class="w-full px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-900">
+                    <button type="submit" id="comment-reply-btn" class="w-full px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-900">
                         Submit Reply
                     </button>
                 </form>
+                <div class="notification" style="display:none"></div>
+
             </div>
         </div>
     </div>

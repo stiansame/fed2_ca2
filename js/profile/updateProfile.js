@@ -4,6 +4,7 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../user/localStorage.js";
+import { displayNotification } from "../utility/displayUserNotifications.js"; // adjust path if needed
 
 // Get the logged-in user data
 const userData = getFromLocalStorage("profile");
@@ -28,15 +29,6 @@ export function profileUpdater(onSuccess) {
 
     if (!bioInput || !avatarInput || !bannerInput) return;
 
-    // Remove existing alert
-    const oldAlert = form.querySelector(".inline-alert");
-    if (oldAlert) oldAlert.remove();
-
-    // Create a new inline alert
-    const alertEl = document.createElement("div");
-    alertEl.className = "inline-alert text-sm mt-2 p-2 rounded-md";
-    form.appendChild(alertEl);
-
     try {
       const updatedProfile = {
         bio: bioInput.value,
@@ -58,28 +50,14 @@ export function profileUpdater(onSuccess) {
       profile.banner = updatedProfile.banner;
       saveToLocalStorage("profile", profile);
 
-      //display message
-      alertEl.textContent = "Profile updated successfully.";
-      alertEl.classList.add(
-        "bg-green-100",
-        "text-green-800",
-        "border",
-        "border-green-300"
-      );
+      // Show success
+      displayNotification("Profile updated successfully.", "success");
     } catch (error) {
-      //display message
-      alertEl.textContent = error.message || "Update failed.";
-      alertEl.classList.add(
-        "bg-red-100",
-        "text-red-800",
-        "border",
-        "border-red-300"
-      );
+      displayNotification(error.message || "Update failed.", "error");
     }
 
-    //remove message and close modal
+    // Close modal after 1.5s and reload
     setTimeout(() => {
-      alertEl.remove();
       const modal = document.getElementById("profileModal");
       modal.classList.add("hidden");
       window.location.reload(true);

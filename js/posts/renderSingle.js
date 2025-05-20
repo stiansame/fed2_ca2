@@ -10,7 +10,10 @@ import { createPostCard } from "./postRenderer.js";
 import { renderComments } from "../comments/commentRenderer.js";
 import { getUrlParam } from "../utility/urlHandler.js";
 import { displayNotification } from "../utility/displayUserNotifications.js";
-import { addPostEventListeners } from "../utility/eventListeners.js";
+import {
+  addPostEventListeners,
+  modalSubmitEventListener,
+} from "../utility/eventListeners.js";
 import { isReacted } from "../utility/handlers/postHandlers.js";
 import { createModal } from "../utility/createModal.js";
 import { checkOwnership } from "../user/userChecks.js";
@@ -113,6 +116,7 @@ async function initPage() {
     // Modals
 
     //Call Modal for editing Post
+    const modal = document.getElementById("editModal");
     createModal({
       openButtonSelector: "#editPostBtn",
       modalId: "editModal",
@@ -189,6 +193,7 @@ async function initPage() {
 
 // Initialize on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", initPage);
+document.querySelectorAll(".modal").forEach(modalSubmitEventListener);
 
 // Export functions that might be needed elsewhere
 export { initPage };

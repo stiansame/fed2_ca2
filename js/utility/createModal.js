@@ -54,12 +54,12 @@ export function createModal({
   const closeButton = document.getElementById(closeButtonId);
   const form = formId ? document.getElementById(formId) : null;
 
-  if (!openButtons.length || !modal || !closeButton) {
+  /*   if (!openButtons.length || !modal || !closeButton) {
     console.warn(
       `Modal setup failed: Check selectors -> ${openButtonSelector}, ${modalId}, ${closeButtonId}`
     );
     return;
-  }
+  } */
 
   // Set ARIA attributes
   modal.setAttribute("role", "dialog");
@@ -132,8 +132,12 @@ export function createModal({
       try {
         await onSubmit();
 
-        closeModal();
+        // Wait 2 seconds, then close the modal and clear the message
+        setTimeout(() => {
+          closeModal();
+        }, 2000);
       } catch (error) {
+        displayNotification("Oh no! Something Happened! Try again", "error");
         console.error("Modal form submission failed:", error);
       } finally {
         if (submitBtn) submitBtn.disabled = false;
