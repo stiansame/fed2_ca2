@@ -15,7 +15,7 @@
     <meta name="description" content="Login to your favourite Frontend shitposting forum">
 </head>
 
-<body class="flex flex-col min-h-screen bg-slate-400">
+<header>
     <!-- Navigation -->
     <nav class="fixed top-0 w-full bg-white shadow-md z-50">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
@@ -26,7 +26,7 @@
 
                 <!-- Navigation Links - Will change layout based on screen size -->
                 <ul id="navLinks" class="hidden flex-col items-start justify-start text-left space-y-2 absolute top-16 left-0 right-0 bg-white p-4
-                                                       sm:static sm:flex sm:flex-row sm:items-center sm:justify-start sm:space-y-0 sm:bg-transparent sm:p-0 sm:gap-4">
+                                                                   sm:static sm:flex sm:flex-row sm:items-center sm:justify-start sm:space-y-0 sm:bg-transparent sm:p-0 sm:gap-4">
                     <li id="loginBtn" class="w-24"><a href="/" class="block text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors px-2">login</a></li>
                     <li class="w-24"><a href="/profile" class="block text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors px-2">profile</a></li>
                     <li class="w-24"><a href="/feed" class="block text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors px-2">feed</a></li>
@@ -43,6 +43,9 @@
             </div>
         </div>
     </nav>
+</header>
+
+<body class="flex flex-col min-h-screen bg-slate-400">
 
     <!-- Main Content -->
     <main class="flex-1 max-w-5xl mx-auto w-full content-center">
