@@ -26,23 +26,36 @@ A finished project fulfils the requirements below with an easy to use and error-
 ### Required features
 The following user stories are required for a passing submission:
 
-User with @noroff.no or @stud.noroff.no email can register profile
-Registered user can login
-User can view a post content feed
-User can filter the post content feed
-User can search the post content feed
-User can view a post content item by ID
-User can create a post content item
-User can update a post content item
-User can delete a post content item
+✅ User with @noroff.no or @stud.noroff.no email can register profile
+✅ Registered user can login
+✅ User can view a post content feed
+✅ User can filter the post content feed
+✅ User can search the post content feed
+✅ User can view a post content item by ID
+✅ User can create a post content item
+✅ User can update a post content item
+✅ User can delete a post content item
 
 ### Additional features
 The following user stories are optional:
 
-User can create a comment on a post
-User can edit profile media
-User can follow/unfollow a profile
-User can react to a post content item
+✅ User can create a comment on a post
+✅ User can edit profile media
+✅ User can follow/unfollow a profile
+✅ User can react to a post content item
+
+### 🔔 bells & Whistles 🎶
+✅ Live reactions / Visual indication if logged in user has liked a post (color and counter)
+✅ Liked, post and comment counter
+✅ Profile page for all users
+✅ Link to user-profile from single_post and comment/reply
+✅ Reply to comment
+✅ Delete comment/reply
+✅ All tags are clickable and renders all posts with same tag
+✅ Hover-function to display names of followers/following
+✅ To-Top floater for long pages
+✅ Feed loads posts in increments of ten. Easily adjusted in code.
+
 
 ## Description
 
