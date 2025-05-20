@@ -1,6 +1,7 @@
 # NOROFF FED2 CA2 JavaScript 2
 
-![image](https://github.com/stiansame/fed2_ca1/blob/css_frameworks/gitImg.jpg?raw=true)
+![image](https://github.com/stiansame/fed2_ca2/blob/js2/api/images/posts/screenshot.jpg?raw=true)
+
 
 ## Goal
 
