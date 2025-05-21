@@ -29,7 +29,6 @@ export async function apiPut(endpoint, body) {
     }
 
     const response = await fetch(url, options);
-    console.log(response);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => null);

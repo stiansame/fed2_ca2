@@ -25,7 +25,6 @@ export async function apiPost(endpoint, body = {}) {
       headers,
       body: JSON.stringify(body),
     });
-    console.log(response);
 
     //basic error handling
     if (!response.ok) {

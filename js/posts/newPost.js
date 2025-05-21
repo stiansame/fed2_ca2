@@ -47,7 +47,6 @@ export function newPost() {
           alt: `image for ${sanitizedTitle}`,
         },
       };
-      console.log(newPost);
 
       // Post it
       await apiPost(`${POSTS}`, newPost);

@@ -24,7 +24,6 @@ export async function apiDelete(endpoint) {
       method: "DELETE",
       headers,
     });
-    console.log(response);
   } catch (error) {
     console.error("API Request Error:", error);
     throw error;

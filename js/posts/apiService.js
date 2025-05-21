@@ -92,8 +92,6 @@ export async function updatePost(postID) {
       },
     };
 
-    console.log(updatedPost, postID);
-
     await apiPut(`/social/posts/${postID}`, updatedPost);
   } catch (error) {
     console.error("There was an error:", error);
@@ -134,11 +132,6 @@ export async function postComment(postId, replyToId = null, contentValue) {
       replyToId: replyToId,
     };
 
-    console.log("Sending comment to API:", {
-      url: `/social/posts/${postId}/comment`,
-      payload: newComment,
-    });
-
     // Post it
     await apiPost(`/social/posts/${postId}/comment`, newComment);
   } catch (error) {
@@ -150,7 +143,6 @@ export async function postComment(postId, replyToId = null, contentValue) {
 export function deleteComment(postId, commentId) {
   try {
     apiDelete(`/social/posts/${postId}/comment/${commentId}`);
-    console.log("Post", postId, "Comment:", commentId);
   } catch (error) {
     console.error("Failed to delete comment", error);
   }
@@ -159,7 +151,6 @@ export function deleteComment(postId, commentId) {
 export function deletePost(postId) {
   try {
     apiDelete(`/social/posts/${postId}`);
-    console.log("Post", postId);
   } catch (error) {
     console.error("Failed to delete comment", error);
   }

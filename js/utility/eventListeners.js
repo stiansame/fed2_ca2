@@ -101,3 +101,12 @@ export function addNewPostListener() {
     });
   }
 }
+
+export function editProfileButtonListener() {
+  const editProfileBtn = document.getElementById("editProfileBtn");
+  if (editProfileBtn) {
+    editProfileBtn.addEventListener("click", () => {
+      displayNotification("Edit mode activated", "info");
+    });
+  }
+}

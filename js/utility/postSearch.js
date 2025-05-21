@@ -18,7 +18,6 @@ export function setupInstantPostSearch(
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(async () => {
       const query = inputElement.value.trim();
-      console.log("Search query:", query);
 
       if (query === "") {
         onReset();
@@ -29,11 +28,8 @@ export function setupInstantPostSearch(
         const json = await apiGet(
           `/social/posts/search?q=${encodeURIComponent(query)}`
         );
-        console.log("API search response:", json);
 
         const posts = json.data || [];
-
-        console.log("Posts passed to renderPosts:", posts);
 
         renderPosts(posts, resultsContainer, {
           containerLayout: "column",

@@ -44,7 +44,6 @@ export async function refreshAll(postId, currentUser) {
     formId: "commentForm",
     onOpen: (btn, modal) => {
       currentPostId = btn.dataset.postId;
-      console.log(currentPostId);
     },
     onSubmit: async () => {
       await postComment(
@@ -69,7 +68,6 @@ export async function refreshAll(postId, currentUser) {
     onOpen: (btn, modal) => {
       currentPostId = btn.dataset.postId;
       currentCommentId = Number(btn.dataset.commentId);
-      console.log(currentPostId, currentCommentId);
     },
     onSubmit: async () => {
       const replyValue = document.querySelector("#replyContent").value;

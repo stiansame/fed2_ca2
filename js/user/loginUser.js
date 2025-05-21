@@ -34,7 +34,7 @@ async function userLogin(url, userData) {
 
     return true;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     // Display error message to user
     displayNotification(
       "Login failed. Please check your credentials and try again.",

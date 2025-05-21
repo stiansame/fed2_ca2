@@ -20,6 +20,7 @@ import { checkOwnership } from "../user/userChecks.js";
 import { refreshAll } from "../utility/handlers/refreshAll.js";
 import { getFromLocalStorage } from "../user/localStorage.js";
 import { setupFollowButton } from "../utility/handlers/followProfile.js";
+import { updateCount } from "../utility/textCounter.js";
 
 // Global state
 let postData = null;
@@ -83,9 +84,6 @@ async function initPage() {
         list.innerHTML = "<li class='text-gray-500'>Could not load posts.</li>";
     }
 
-    // LOGGING
-    console.log(postData);
-
     // Get profile data
     const profileData = await fetchProfileData(postProfile);
     followerCount = profileData._count?.followers || 0;
@@ -103,7 +101,6 @@ async function initPage() {
     //Check and alter follow state
     const userName = getFromLocalStorage("profile")?.name;
     const followersArray = profileData.followers;
-    console.log(profileData);
 
     setupFollowButton({
       btnId: "followBtn",
@@ -122,6 +119,9 @@ async function initPage() {
       modalId: "editModal",
       closeButtonId: "closeEditModal",
       formId: "editPostForm",
+      onOpen: () => {
+        updateCount("editContent", "editCharCount");
+      },
       onSubmit: () => updatePost(postId),
     });
 
@@ -137,7 +137,6 @@ async function initPage() {
 
       onOpen: (btn, modal) => {
         currentPostId = btn.dataset.postId;
-        console.log(currentPostId);
       },
       onSubmit: async () => {
         await postComment(
@@ -171,11 +170,9 @@ async function initPage() {
       onOpen: (btn, modal) => {
         currentPostId = btn.dataset.postId;
         currentCommentId = Number(btn.dataset.commentId);
-        console.log(currentPostId, currentCommentId);
       },
       onSubmit: async () => {
         const replyValue = document.querySelector("#replyContent").value;
-        console.log("Reply Value:", replyValue);
 
         await postComment(currentPostId, currentCommentId, replyValue);
         const updatedPost = await fetchPost(currentPostId);
@@ -194,6 +191,3 @@ async function initPage() {
 // Initialize on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", initPage);
 document.querySelectorAll(".modal").forEach(modalSubmitEventListener);
-
-// Export functions that might be needed elsewhere
-export { initPage };

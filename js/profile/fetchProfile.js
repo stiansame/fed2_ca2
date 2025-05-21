@@ -8,6 +8,7 @@ import { checkOwnership } from "../user/userChecks.js";
 import { fetchPostsByProfile } from "../posts/apiService.js";
 import { setupFollowButton } from "../utility/handlers/followProfile.js";
 import { attachHoverInfoBox } from "../utility/hoverInfoBox.js";
+import { editProfileButtonListener } from "../utility/eventListeners.js";
 
 // Get the logged-in user data
 const loggedInUser = getFromLocalStorage("profile") || {};
@@ -215,6 +216,7 @@ function renderErrorState() {
 // Initialize the page
 document.addEventListener("DOMContentLoaded", () => {
   fetchSingleProfile();
+  editProfileButtonListener();
 
   // Initialize Feather icons
   if (window.feather) {

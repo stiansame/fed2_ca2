@@ -17,7 +17,7 @@ export function createLikeButtonHandler(card, postId) {
       // Find icon element
       const iconElement = findHeartIcon(card);
       if (!iconElement) {
-        console.log("Icon element not found!");
+        console.error("Icon element not found!");
         return;
       }
 
@@ -33,7 +33,6 @@ export function createLikeButtonHandler(card, postId) {
       // Always use /react/{reaction}
       const reaction = "❤️";
       const toggleUrl = `/social/posts/${postId}/react/${reaction}`;
-      console.log("PUT Reaction URL:", toggleUrl); // Log for debugging
 
       // API toggles the reaction for you
       const response = await apiPut(toggleUrl, {});
