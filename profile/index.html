@@ -11,93 +11,197 @@
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
     <script src="../js/menu.js" type="module"></script>
-    <script src="../js/lastPosts.js" type="module"></script>
+    <script src="../js/profile/fetchProfile.js" type="module"></script>
     <title>FEDS | profile</title>
-    <meta name="description" content="Check out the profile of your favourtie frontend development shitposter">
+    <meta name="description" content="Check out the profile of your favorite frontend development shitposter">
 </head>
 
+
+
 <body class="flex flex-col min-h-screen bg-slate-400">
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-white shadow-md z-50">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0">
-                    <img src="../api/images/logo/logo.png" alt="logo for FEDS" class="h-16">
-                </div>
-
-                <!-- Navigation Links - Will change layout based on screen size -->
-                <ul class="hidden sm:flex sm:items-center sm:space-x-8" id="navLinks">
-                    <li><a href="/" class="text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors">login</a></li>
-                    <li><a href="/profile" class="text-xl text-blue-900 font-bold transition-colors">profile</a></li>
-                    <li><a href="/feed" class="text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors">feed</a></li>
-                </ul>
-
-                <!-- Mobile menu button -->
-                <button type="button" id="menuButton" class="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-blue-700 hover:text-blue-900 focus:outline-none"
-                    aria-label="Toggle menu">
-                    <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="flex-1 max-w-5xl  mx-auto w-full content-center">
-        <div class="pt-20 px-4 sm:px-6">
-            <!-- Profile Header -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <div class="flex flex-col sm:flex-row items-center gap-6">
-                    <!-- Profile Image -->
-                    <img src="../api/images/profile/profiel.jpg" alt="Profile" class="w-32 h-32 rounded-full object-cover border-4 border-blue-700">
-
-                    <!-- Profile Info -->
-                    <div class="flex-1 text-center sm:text-left">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-2">Braxxxton</h1>
-
-                        <!-- Stats -->
-                        <div class="flex justify-center sm:justify-start gap-6 mb-4">
-                            <div class="text-center">
-                                <span class="block font-bold text-gray-800">4</span>
-                                <span class="text-gray-600">Posts</span>
-                            </div>
-                            <div class="text-center">
-                                <span class="block font-bold text-gray-800">1,234</span>
-                                <span class="text-gray-600">Followers</span>
-                            </div>
-                            <div class="text-center">
-                                <span class="block font-bold text-gray-800">567</span>
-                                <span class="text-gray-600">Following</span>
-                            </div>
+    <header>
+        <!-- Navigation -->
+        <nav class="fixed top-0 w-full bg-white shadow-md z-50">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                <div class="flex justify-between items-center h-16">
+                    <a href="../feed/index.html">
+                        <div class="flex-shrink-0">
+                            <img src="../api/images/logo/logo.png" alt="logo for FEDS" class="h-16">
                         </div>
+                    </a>
 
-                        <!-- Follow Button -->
-                        <button class="px-6 py-2 rounded-full font-semibold bg-blue-700 text-white hover:bg-blue-900">
-                            Follow
+                    <!-- Navigation Links - Will change layout based on screen size -->
+                    <ul id="navLinks" class="hidden flex-col items-start justify-start text-left space-y-2 absolute top-16 left-0 right-0 bg-white p-4 shadow-md sm:shadow-none
+                                                                                       sm:static sm:flex sm:flex-row sm:items-center sm:justify-start sm:space-y-0 sm:bg-transparent sm:p-0 sm:gap-4">
+                        <li id="loginBtn" class="w-24"><a href="/" class="block text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors px-2">login</a></li>
+                        <li class="w-24"><a href="/profile" class="block text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors px-2">profile</a></li>
+                        <li class="w-24"><a href="/feed" class="block text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors px-2">feed</a></li>
+                        <li id="logoutBtn" class="w-24"><a href="" class="block text-xl text-blue-700 hover:text-blue-900 hover:font-bold transition-colors px-2">logout</a></li>
+                    </ul>
+
+                    <!-- Mobile menu button -->
+                    <button type="button" id="menuButton" class="sm:hidden inline-flex items-center justify-center p-2 rounded-md text-blue-700 hover:text-blue-900 focus:outline-none"
+                        aria-label="Toggle menu">
+                        <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- Main Content -->
+    <main class="flex-1 max-w-5xl mx-auto w-full content-center">
+        <div class="pt-20 px-4 sm:px-6">
+            <div class="notification" style="display:none"></div>
+
+            <!-- Profile Header -->
+            <div class="bg-white rounded-lg shadow-md mb-6 relative overflow-hidden">
+                <!-- Grid structure for the entire profile -->
+                <div class="grid grid-cols-1">
+                    <!-- Profile banner -->
+                    <div class="w-full h-48">
+                        <img src="../api/images/profile/my_banner.png" alt="Profile Banner" class="w-full h-full object-cover" id="profileBannerImg">
+                    </div>
+
+                    <!-- Edit Profile Icon  -->
+                    <div class="flex justify-end mt-4 pr-4">
+                        <button id="editProfileBtn" class="text-blue-700 hover:text-blue-900 text-lg" aria-label="Edit profile">
+                            <i data-feather="edit" class="h-6 w-6"></i>
                         </button>
+                    </div>
+
+                    <!-- Profile Image -->
+                    <div class="absolute left-1/2 top-48 transform -translate-x-1/2 -translate-y-1/2">
+                        <img src="../api/images/profile/default_profile.jpg" alt="Profile" class="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-blue-700"
+                            id="profileAvatarImg">
+                    </div>
+
+                    <!-- Profile content section -->
+                    <div class="px-4 pt-16 pb-6">
+                        <!-- Profile Info -->
+                        <div class="text-center">
+                            <h1 class="text-2xl font-bold text-gray-800 mb-2">Loading...</h1>
+
+                            <!-- Bio Row -->
+                            <div class="max-w-xl mx-auto text-center text-gray-700 mb-4">
+                                <p id="profileBio">This is a short bio about the user. It can be updated dynamically.</p>
+                            </div>
+
+                            <!-- Stats - horizontal row -->
+                            <div class="flex justify-center gap-6 mb-4">
+                                <div class="text-center">
+                                    <span class="block font-bold text-gray-800">0</span>
+                                    <span class="text-gray-600">Posts</span>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-gray-800">0</span>
+                                    <span class="text-gray-600">Followers</span>
+                                </div>
+                                <div class="text-center">
+                                    <span class="block font-bold text-gray-800">0</span>
+                                    <span class="text-gray-600">Following</span>
+                                </div>
+                                <!-- Follow Button -->
+                                <button id="followProfileBtn" class="px-3 py-1 border border-blue-700 text-blue-700 rounded-md hover:bg-blue-50 flex items-center gap-1">
+                                    <i data-feather="user-plus" class="h-3 w-3"></i><span>Follow</span>
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Update Profile Modal -->
+            <div id="profileModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200 backdrop-blur-md">
+
+                <div class="modal-content bg-white rounded-lg w-full max-w-lg mx-4 transform transition-all duration-200 scale-95 opacity-0">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold">Update Profile</h2>
+                            <button id="closeProfileModal" class="text-gray-500 hover:text-gray-700">
+                                <i data-feather="x" class="h-6 w-6"></i>
+                            </button>
+                        </div>
+                        <form id="updateProfileForm" class="space-y-4">
+
+                            <!-- Current Avatar -->
+                            <div class="flex flex-col items-center space-y-2">
+                                <img id="currentAvatar" src="../api/images/profile/default_profile.jpg" alt="" class="h-24 w-24 rounded-full border-2 border-blue-700 object-cover">
+                            </div>
+
+                            <!-- Editable Avatar URLS -->
+                            <div>
+                                <label for="avatarUrl" class="sr-only">Avatar</label>
+                                <textarea id="avatarUrl" placeholder="Update avatar URL"
+                                    class="w-full px-3 py-2 border rounded-md text-xs resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <div>
+                                <label for="bannerUrl" class="sr-only">Banner</label>
+                                <textarea id="bannerUrl" placeholder="Update banner URL"
+                                    class="w-full px-3 py-2 border rounded-md text-xs resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <!-- Name (not editable) -->
+                            <div>
+                                <label for="name" class="sr-only">Name</label>
+                                <input type="text" id="name" value="" class="w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500 cursor-not-allowed" readonly>
+                            </div>
+
+                            <!-- Email (not editable) -->
+                            <div>
+                                <label for="email" class="sr-only">Email</label>
+                                <input type="email" id="email" value="" class="w-full px-3 py-2 border rounded-md bg-gray-100 text-gray-500 cursor-not-allowed" readonly>
+                            </div>
+
+                            <!-- Editable Bio -->
+                            <div>
+                                <label for="bio" class="sr-only">Bio</label>
+                                <textarea id="bio" placeholder="Write something about yourself..."
+                                    class="w-full h-32 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <!-- Save Changes Button -->
+                            <button type="submit" class="w-full px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-900">
+                                Save Changes
+                            </button>
+                        </form>
+                        <div class="notification" style="display:none"></div>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+
             <!-- Posts Section -->
             <div class="bg-transparent p-6">
-                <h1 class="text-2xl font-bold text-white mb-4">Posts</h1>
-                <div id="postsContainer" class="space-y-4">
-                    <!-- Posts will be inserted here by JavaScript -->
+                <h2 class="text-2xl font-bold text-white mb-4">Posts</h2>
+                <div class="space-y-4 postsContainer">
+                    <!-- Loading state -->
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                        <p class="text-gray-600">Loading posts...</p>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- Scroll to Top Button -->
+        <button id="scrollToTopBtn"
+            class="fixed bottom-24 right-6 z-[999] bg-blue-700 hover:bg-blue-900 text-white rounded-full p-4 shadow-lg transition-all duration-300 opacity-0 pointer-events-none flex items-center justify-center"
+            aria-label="Scroll to top">
+            <i data-feather="arrow-up" class="w-6 h-6"></i>
+        </button>
     </main>
+    <!--Footer-->
     <footer class="md:sticky bottom-0 w-full border-t-2 border-blue-700 bg-white z-50">
         <div class="max-w-5xl mx-auto text-right p-4">
             <p>All images generated by A.I</p>
-            <p>NOROFF FED-2 CA1 css frameworks | &#169; 2025 Stian Rostad. All rights reserved.</p>
-
+            <p>NOROFF FED-2 CA2 JavaScript 2 | &#169; 2025 Stian Rostad. All rights reserved.</p>
         </div>
-
     </footer>
-
 </body>
 
 </html>

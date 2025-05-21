@@ -1,6 +1,7 @@
 # NOROFF FED2 CA2 JavaScript 2
 
-![image](https://github.com/stiansame/fed2_ca1/blob/css_frameworks/gitImg.jpg?raw=true)
+![image](https://github.com/stiansame/fed2_ca2/blob/js2/api/images/posts/screenshot.jpg?raw=true)
+
 
 ## Goal
 
@@ -80,7 +81,9 @@ The following user stories are optional:
 
 
 ## Description
+SOME Frontend for connecting to and fetching, posting, updating and deleting posts, comments and profiles from the Noroff V2 API.
 
+Link to Project Management /kanBan on Trello: [Trello/JS2 CA](https://trello.com/b/IkASqxI9/ca-js2-tasks)
 
 
 ## Built With

@@ -1,144 +1,280 @@
-// Initialize Feather icons
-feather.replace();
+import { apiGet } from "./api/getAPI.js";
+import { createModal } from "./utility/createModal.js";
+import { newPost } from "./posts/newPost.js";
+import { updateCount } from "./utility/textCounter.js";
+import { renderPosts } from "./posts/renderAllposts.js";
+import { fetchCurrentUser } from "./user/userChecks.js";
+import { addNewPostListener } from "./utility/eventListeners.js";
 
-// Sample posts data
-export const posts = [
-  {
-    id: 1,
-    title: "Flexbox? More Like Gaslightbox 💀",
-    author: "Braxxxton",
-    content:
-      "🚀🔥 Just deployed my React app, and tell me why CSS Flexbox is STILL gaslighting me?? 💀 Like, I deadass set justify-content: center, but my divs out here playing musical chairs. 😭 I refresh, and boom—everything’s vibing in Narnia. Someone PLEASE drop a W fix before I start full-on beefing with VS Code. Fr, at this point, I need a therapist for my CSS. 🫠",
-    likes: 234,
-    comments: 45,
-    image: "../api/images/posts/post1.jpg",
-  },
-  {
-    id: 2,
-    title: "Tailwind or Jailwind? 🤨",
-    author: "Zephryx",
-    content:
-      "Nahhh, if you’re still writing vanilla CSS in 2025, are you good?? 😭 Tailwind is literally the GOAT 🐐💨—typing flex items-center justify-center just hits different. Manual CSS? That’s giving flip phone energy. 📵 I see margin: 0 auto and I just know the dev is fighting for their life. 💀 Do yourself a favor, download Tailwind, and let the utility classes cook. 🔥",
-    likes: 189,
-    comments: 32,
-    image: "../api/images/posts/post2.jpg",
-  },
-  {
-    id: 3,
-    title: "JSX? More Like J-Suspect 🤨",
-    author: "Braxxxton",
-    content:
-      "Bruh, JSX is so ✨delulu✨ sometimes. Like, why I gotta wrap EVERYTHING in one parent element?? My &lt;div&gt;s are stacking like unpaid bills. 😩 Also, can we talk about how map() is an instant glow-up for rendering lists? One second, you’re manually typing out &ltli&gt, the next, you’re printing arrays like you own a factory. 📈 It feels borderline illegal how smooth it is. Lowkey might start gatekeeping React before y’all ruin it. 💅",
-    likes: 11,
-    comments: 2,
-    image: "../api/images/posts/post3.jpg",
-  },
-  {
-    id: 4,
-    title: "JavaScript Be Gaslighting Me HARD 💀",
-    author: "Braxxxton",
-    content:
-      "Tell me why I write console.log(variable) and JavaScript is like: “Undefined.” 🤨 Bro, you were JUST there. I SAW you. 👀 Then I add a setTimeout() and suddenly, it works??? Nah, JavaScript be moving like it’s in witness protection. 🫠 And don’t even get me started on null vs undefined—that’s a beef I’m taking to the grave. 💀",
-    likes: 18,
-    comments: 38,
-    image: "../api/images/posts/post4.jpg",
-  },
-  {
-    id: 5,
-    title: "CSS Grid? More Like Gridlock 🚦",
-    author: "Zephryx",
-    content:
-      "Ayo, CSS Grid is mad powerful, but why do I feel like I need a PhD to use it?? 😭 One wrong grid-template-areas move, and suddenly my layout looks like it was coded in Microsoft Paint. 🎨 Bro, I just wanted a simple 3-column design, not a Picasso masterpiece. 💀 Somebody PLEASE tell me the Grid cheat codes before I start coding with absolute positioning out of spite. 🫠",
-    likes: 202,
-    comments: 111,
-    image: "../api/images/posts/post5.jpg",
-  },
-  {
-    id: 6,
-    title: "React State? More Like React Trauma 😵‍💫",
-    author: "Braxxxton",
-    content:
-      "Why is managing state in React more stressful than my situationship? 🤡 I update one variable, and suddenly my entire component remounts like it’s auditioning for a reboot. 😭 Then I discover the useEffect() dependency array and BOOM—everything either runs infinitely or doesn’t run at all. 💀 Like damn React, you could’ve just said you hated me. 🫠",
-    likes: 65,
-    comments: 45,
-    image: "../api/images/posts/post6.jpg",
-  },
-];
+// ---- FEED STATE ----
+let postData = [];
+let page = 1;
+const limit = 10;
+let isLoading = false;
+let currentFilter = "fedsPosts";
+let currentUserFilterUrl;
 
-// Render posts using a for loop
-function renderPosts() {
-  const container = document.getElementById("postsContainer");
-  if (!container) return; // Guard clause if container doesn't exist
+// --- TAG FILTER ADDITIONS ---
+let tagFilter = null;
+function getTagFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("tag");
+}
+tagFilter = getTagFromUrl();
+// --- END TAG FILTER ADDITIONS ---
 
-  container.innerHTML = "";
+// ---- SEARCH STATE ----
+let searchData = [];
+let searchPage = 1;
+let searchQuery = "";
+let searchIsLoading = false;
+let searchMode = false;
 
-  for (let post of posts) {
-    const postElement = document.createElement("div");
-    postElement.className =
-      "bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden";
+// ---- DOM ELEMENTS ----
+const postsContainer = document.querySelector(".postsContainer");
+const loadMoreBtn = document.getElementById("loadMoreBtn");
+const filterDropdown = document.getElementById("filterBy");
+const feedTitle = document.getElementById("feedTitle");
+const searchInput = document.getElementById("search");
 
-    postElement.innerHTML = `
-      <div class="flex flex-col md:flex-row">
-          <div class="w-full md:w-72 md:flex-shrink-0">
-              <img src="${post.image}" 
-                   alt="${post.title}" 
-                   class="w-full h-48 md:h-full object-cover">
-          </div>
-          <div class="flex-1 flex flex-col">
-              <div class="p-6">
-                  <h3 class="text-xl font-bold text-gray-800">${post.title}</h3>
-                  <p class="text-sm text-gray-500 mb-4">By ${post.author}</p>
-                  <div class="prose max-w-none">
-                      <p class="text-gray-700 whitespace-pre-line">${post.content}</p>
-                  </div>
-              </div>
-              <div class="p-6 border-t mt-auto">
-                  <div class="flex justify-between items-center">
-                      <div class="flex gap-4">
-                          <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                              <i data-feather="heart" class="h-4 w-4"></i>
-                              ${post.likes}
-                          </button>
-                          <button class="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                              <i data-feather="message-circle" class="h-4 w-4"></i>
-                              ${post.comments}
-                          </button>
-                      </div>
-                      <div class="flex gap-2">
-                          <button class="text-gray-600 hover:text-gray-800">
-                              <i data-feather="share-2" class="h-4 w-4"></i>
-                          </button>
-                          <button class="text-gray-600 hover:text-gray-800">
-                              <i data-feather="bookmark" class="h-4 w-4"></i>
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
-    `;
+// ---- FILTER URLS ----
+const fedsFilterUrl = "/social/posts/?_tag=feds";
+const followingFilterUrl = "/social/posts/following";
 
-    // Add margin bottom to all posts except the last one
-    if (posts.indexOf(post) < posts.length - 1) {
-      postElement.classList.add("mb-8");
+// ---- FETCH AND RENDER POSTS (FEED) ----
+async function fetchAndRenderPosts(loadMoreBtn) {
+  if (isLoading) return;
+  isLoading = true;
+
+  // --- TAG FILTER ---
+  let filterUrl;
+  if (tagFilter) {
+    filterUrl = `/social/posts/?_tag=${encodeURIComponent(tagFilter)}`;
+    if (feedTitle) {
+      feedTitle.textContent = `Posts tagged #${tagFilter}`;
+      document.title = `FEDS | #${tagFilter}`;
     }
-
-    container.appendChild(postElement);
+  } else {
+    // pick filter URL
+    switch (currentFilter) {
+      case "fedsPosts":
+        filterUrl = fedsFilterUrl;
+        break;
+      case "following":
+        filterUrl = followingFilterUrl;
+        break;
+      case "yourPosts":
+        filterUrl = currentUserFilterUrl;
+        break;
+      case "allPosts":
+        filterUrl = "/social/posts";
+        break;
+      default:
+        filterUrl = fedsFilterUrl;
+        break;
+    }
+    if (feedTitle && !searchMode) {
+      const titles = {
+        allPosts: "All Posts",
+        fedsPosts: "Latest Frontend Shitposting",
+        following: "Latest from your followers",
+        yourPosts: "Your Posts",
+      };
+      feedTitle.textContent = titles[currentFilter] || "Feed";
+      document.title = `FEDS feed | ${titles[currentFilter]}`;
+    }
   }
 
-  // Reinitialize Feather icons
-  feather.replace();
-
-  // FOR FUTURE REFERENCE Add click event listeners to buttons
-  const buttons = container.querySelectorAll("button");
-  buttons.forEach((button) => {
-    button.addEventListener("click", (e) => {
-      console.log("Button clicked", e.currentTarget);
+  try {
+    const { data: newPosts } = await apiGet(filterUrl, {
+      limit,
+      page,
+      _author: true,
+      _reactions: true,
+      sort: "created",
+      sortOrder: "desc",
     });
+
+    postData = [...postData, ...newPosts];
+    renderPosts(postData, postsContainer, {
+      containerLayout: "column",
+      cardLayout: "responsive",
+    });
+
+    if (newPosts.length === limit) {
+      loadMoreBtn.style.display = "block";
+    } else {
+      loadMoreBtn.style.display = "none";
+    }
+
+    page++;
+    newPost();
+  } catch (err) {
+    postsContainer.innerHTML = `<div class="text-red-600">Error loading posts.</div>`;
+    loadMoreBtn.style.display = "none";
+    console.error("Failed to fetch posts:", err);
+  } finally {
+    isLoading = false;
+  }
+}
+
+// ---- FETCH AND RENDER POSTS (SEARCH) ----
+async function fetchAndRenderSearch(loadMoreBtn) {
+  if (searchIsLoading) return;
+  searchIsLoading = true;
+
+  try {
+    const { data: newPosts } = await apiGet(
+      `/social/posts/search?q=${encodeURIComponent(searchQuery)}`,
+      {
+        limit,
+        page: searchPage,
+        _author: true,
+        _reactions: true,
+        sort: "created",
+        sortOrder: "desc",
+      }
+    );
+
+    searchData = [...searchData, ...newPosts];
+
+    // Show "No results" message if searchData is empty
+    if (searchData.length === 0) {
+      postsContainer.innerHTML = `<div class="text-gray-500 text-center py-8 w-full">No posts found for "${searchQuery}".</div>`;
+      loadMoreBtn.style.display = "none";
+      return;
+    }
+
+    renderPosts(searchData, postsContainer, {
+      containerLayout: "column",
+      cardLayout: "responsive",
+    });
+
+    if (newPosts.length === limit) {
+      loadMoreBtn.style.display = "block";
+    } else {
+      loadMoreBtn.style.display = "none";
+    }
+
+    searchPage++;
+  } catch (err) {
+    postsContainer.innerHTML = `<div class="text-red-600">Error loading search results.</div>`;
+    loadMoreBtn.style.display = "none";
+    console.error("Failed to fetch search posts:", err);
+  } finally {
+    searchIsLoading = false;
+  }
+}
+
+// ---- SEARCH INPUT HANDLER ----
+searchInput.addEventListener("input", () => {
+  searchQuery = searchInput.value.trim();
+  if (feedTitle) {
+    feedTitle.textContent = searchQuery
+      ? "Search Results"
+      : tagFilter
+      ? `Posts tagged #${tagFilter}`
+      : "Latest Frontend Shitposting";
+  }
+
+  if (!searchQuery) {
+    // Exit search mode, restore normal feed
+    searchMode = false;
+    searchData = [];
+    searchPage = 1;
+    postData = [];
+    page = 1;
+    fetchAndRenderPosts(loadMoreBtn);
+    return;
+  }
+  // Enter search mode
+  searchMode = true;
+  searchData = [];
+  searchPage = 1;
+  fetchAndRenderSearch(loadMoreBtn);
+});
+
+// ---- LOAD MORE BUTTON HANDLER ----
+loadMoreBtn.addEventListener("click", () => {
+  if (searchMode) {
+    fetchAndRenderSearch(loadMoreBtn);
+  } else {
+    fetchAndRenderPosts(loadMoreBtn);
+  }
+});
+
+// ---- FILTER DROPDOWN HANDLER ----
+if (filterDropdown) {
+  filterDropdown.addEventListener("change", (e) => {
+    // --- TAG FILTER  ---
+    tagFilter = null;
+    // Remove 'tag' from URL
+    if (window.history && window.history.replaceState) {
+      const url = new URL(window.location);
+      url.searchParams.delete("tag");
+      window.history.replaceState({}, "", url);
+    }
+
+    currentFilter = e.target.value;
+    if (feedTitle) {
+      const titles = {
+        allPosts: "All Posts",
+        fedsPosts: "Latest Frontend Shitposting",
+        following: "Latest from your followers",
+        yourPosts: "Your Posts",
+      };
+      feedTitle.textContent = titles[currentFilter] || "Feed";
+      document.title = `FEDS feed | ${titles[currentFilter]}`;
+    }
+    postData = [];
+    page = 1;
+    fetchAndRenderPosts(loadMoreBtn);
   });
 }
 
-// Initialize when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
-  renderPosts();
+// ---- DOMContentLoaded ----
+document.addEventListener("DOMContentLoaded", async () => {
+  updateCount("content", "charCount");
+  if (window.feather) feather.replace();
+
+  // fetch current user
+  const { name: currentUser } = await fetchCurrentUser();
+  currentUserFilterUrl = `/social/profiles/${currentUser}/posts`;
+
+  // setup for image preview in Modal
+  const loadImageBtn = document.getElementById("loadImageBtn");
+  const imageUrlInput = document.getElementById("imageUrl");
+  const imagePreview = document.getElementById("imagePreview");
+  if (loadImageBtn && imageUrlInput && imagePreview) {
+    loadImageBtn.addEventListener("click", () => {
+      const url = imageUrlInput.value.trim();
+      imagePreview.innerHTML = ""; // Clear previous
+      if (url) {
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "Preview";
+        img.className =
+          "max-w-full w-full max-h-80 object-cover rounded-md border mt-2";
+        img.onerror = () => {
+          imagePreview.innerHTML = `<p class="text-red-500 text-sm mt-2">Could not load image. Check the URL.</p>`;
+        };
+        imagePreview.appendChild(img);
+      }
+    });
+  }
+
+  // set up modal
+  createModal({
+    openButtonSelector: "#newPostBtn",
+    modalId: "modal",
+    closeButtonId: "closeModal",
+    formId: "newPostForm",
+    onSubmit: ({ form }) => {
+      /* ... */
+    },
+  });
+
+  // Initial feed load
+  fetchAndRenderPosts(loadMoreBtn);
+  addNewPostListener();
 });
