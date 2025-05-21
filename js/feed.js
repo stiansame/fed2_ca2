@@ -4,6 +4,7 @@ import { newPost } from "./posts/newPost.js";
 import { updateCount } from "./utility/textCounter.js";
 import { renderPosts } from "./posts/renderAllposts.js";
 import { fetchCurrentUser } from "./user/userChecks.js";
+import { addNewPostListener } from "./utility/eventListeners.js";
 
 // ---- FEED STATE ----
 let postData = [];
@@ -275,4 +276,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Initial feed load
   fetchAndRenderPosts(loadMoreBtn);
+  addNewPostListener();
 });

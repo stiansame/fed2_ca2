@@ -53,6 +53,13 @@ export function modalSubmitEventListener(modal) {
       displayNotification("You commented this post", "success");
     });
   }
+
+  const submitPostBtn = modal.querySelector("#submitPostBtn");
+  if (submitPostBtn) {
+    submitPostBtn.addEventListener("click", () => {
+      displayNotification("You posted a new Post 🥳", "success");
+    });
+  }
 }
 
 /**
@@ -61,7 +68,7 @@ export function modalSubmitEventListener(modal) {
  */
 export function addCommentEventListeners(container) {
   // Reply buttons
-  commentsContainer.querySelectorAll(".reply-comment-btn").forEach((btn) => {
+  container.querySelectorAll(".reply-comment-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       displayNotification("Reply mode activated", "info");
     });
@@ -84,4 +91,13 @@ export function addCommentEventListeners(container) {
       }
     });
   });
+}
+
+export function addNewPostListener() {
+  const newPostBtn = document.getElementById("newPostBtn");
+  if (newPostBtn) {
+    newPostBtn.addEventListener("click", () => {
+      displayNotification("Create new mode activated", "info");
+    });
+  }
 }

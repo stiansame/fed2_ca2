@@ -1,7 +1,7 @@
 import { API_BASE, API_AUTH, API_LOGIN } from "../api/apiEndpoints.js";
 import { saveToLocalStorage } from "./localStorage.js";
 import { validateEmail } from "./validateEmail.js";
-import { displayErrorMessage } from "../utility/displayUserNotifications.js";
+import { displayNotification } from "../utility/displayUserNotifications.js";
 
 const loginUrl = API_BASE + API_AUTH + API_LOGIN;
 
@@ -25,15 +25,20 @@ async function userLogin(url, userData) {
     saveToLocalStorage("profile", profile);
     saveToLocalStorage("accessToken", accessToken);
 
+    displayNotification("Login was successful", "success");
+
     // Redirect to profile page after successful login
-    window.location.href = "/profile";
+    setTimeout(() => {
+      window.location.href = "/profile";
+    }, 2000);
 
     return true;
   } catch (error) {
     console.log(error);
     // Display error message to user
-    displayErrorMessage(
-      "Login failed. Please check your credentials and try again."
+    displayNotification(
+      "Login failed. Please check your credentials and try again.",
+      "error"
     );
     return false;
   }
@@ -63,12 +68,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Validate inputs
     if (!validateEmail(email)) {
-      displayErrorMessage("Please enter a valid email address.");
+      displayNotification("Please enter a valid email address.", "error");
       return;
     }
 
     if (!validatePassword(password)) {
-      displayErrorMessage("Password must be at least 8 characters long.");
+      displayNotification(
+        "Password must be at least 8 characters long.",
+        "info"
+      );
       return;
     }
 

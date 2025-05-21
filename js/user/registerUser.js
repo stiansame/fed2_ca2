@@ -1,7 +1,7 @@
 import { API_BASE, API_REGISTER, API_AUTH } from "../api/apiEndpoints.js";
 import { saveToLocalStorage } from "./localStorage.js";
 import { validateEmail } from "./validateEmail.js";
-import { displayErrorMessage } from "../utility/displayUserNotifications.js";
+import { displayNotification } from "../utility/displayUserNotifications.js";
 
 const registerUrl = API_BASE + API_AUTH + API_REGISTER;
 
@@ -26,15 +26,20 @@ async function registerUser(url, userData) {
     saveToLocalStorage("profile", profile);
     saveToLocalStorage("accessToken", accessToken);
 
+    displayNotification("Registration was successful", "success");
+
     // Redirect to login page after successful registration
-    window.location.href = "../../";
+    setTimeout(() => {
+      window.location.href = "../../";
+    }, 2000);
 
     return true;
   } catch (error) {
     console.error(error);
-    displayErrorMessage(
+    displayNotification(
       error.message ||
-        "Registration failed. Please check the details and try again."
+        "Registration failed. Please check the details and try again.",
+      "error"
     );
     return false;
   }
@@ -63,17 +68,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const password = passwordInput.value;
 
     if (!username) {
-      displayErrorMessage("Please enter a username.");
+      displayNotification("Please enter a username.", "info");
       return;
     }
 
     if (!validateEmail(email)) {
-      displayErrorMessage("Please enter a valid email address.");
+      displayNotification(
+        "Please enter a valid email address. Must be @stud.noroff or @noroff domain",
+        "error"
+      );
       return;
     }
 
     if (!validatePassword(password)) {
-      displayErrorMessage("Password must be at least 8 characters long.");
+      displayNotification(
+        "Password must be at least 8 characters long.",
+        "info"
+      );
       return;
     }
 

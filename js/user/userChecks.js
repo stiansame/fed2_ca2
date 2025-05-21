@@ -1,7 +1,15 @@
 import { getFromLocalStorage } from "../user/localStorage.js";
 import { displayNotification } from "../utility/displayUserNotifications.js";
 
-// Fetch current user
+/**
+ * Asynchronously fetches the currently logged-in user's profile from local storage.
+ * Displays an error notification if no user is found or if fetching fails.
+ *
+ * @async
+ * @function fetchCurrentUser
+ * @returns {Promise<Object|string>} Resolves to the user profile object if found,
+ * or the string "undefined" if not found or on error.
+ */
 export async function fetchCurrentUser() {
   try {
     const loggedInUser = await getFromLocalStorage("profile");
@@ -34,14 +42,19 @@ export async function checkOwnership(type, data, buttonElement) {
     return false;
   }
 
+  // Use destructuring for relevant objects
+  const { name: loggedInUserName } = loggedInUser || {};
   let isOwner = false;
 
   if (type === "post") {
-    isOwner = data.author && data.author.name === loggedInUser.name;
+    const { author = {} } = data || {};
+    isOwner = author.name === loggedInUserName;
   } else if (type === "profile") {
-    isOwner = data.name === loggedInUser.name;
+    const { name } = data || {};
+    isOwner = name === loggedInUserName;
   } else if (type === "comment" || type === "reply") {
-    isOwner = data.author && data.author.name === loggedInUser.name;
+    const { author = {} } = data || {};
+    isOwner = author.name === loggedInUserName;
   } else {
     console.error(
       "Invalid type provided. Must be 'post', 'profile', 'comment', or 'reply'."
@@ -50,16 +63,25 @@ export async function checkOwnership(type, data, buttonElement) {
   }
 
   if (buttonElement) {
-    if (isOwner) {
-      buttonElement.classList.remove("hidden");
-    } else {
-      buttonElement.classList.add("hidden");
-    }
+    buttonElement.classList.toggle("hidden", !isOwner);
   }
 
   return isOwner;
 }
 
+/**
+ * Checks if a user is logged in and updates the visibility of login/logout buttons.
+ * If the user is not logged in, redirects them to the login page unless they are
+ * already on the login or register page.
+ *
+ * - Hides the login button and shows the logout button if the user is logged in.
+ * - Shows the login button and hides the logout button if the user is not logged in.
+ * - Redirects to the login page if not on login or register page.
+ *
+ * @async
+ * @function checkLoginAndRoute
+ * @returns {Promise<void>} Resolves when the function completes.
+ */
 export async function checkLoginAndRoute() {
   const currentUser = await fetchCurrentUser();
   const loginBtn = document.getElementById("loginBtn");
@@ -67,20 +89,30 @@ export async function checkLoginAndRoute() {
 
   if (currentUser && currentUser !== "undefined") {
     // User is logged in, just update menu
-    if (loginBtn) loginBtn.classList.add("hidden");
-    if (logoutBtn) logoutBtn.classList.remove("hidden");
+    loginBtn?.classList.add("hidden");
+    logoutBtn?.classList.remove("hidden");
   } else {
-    // Not logged in, redirect to login (unless already there)
-    if (!window.location.pathname.includes("login")) {
+    // Not logged in
+    const { pathname } = window.location;
+    const isOnLoginPage = pathname.includes("login");
+    const isOnRegisterPage = pathname.endsWith("/register/");
+
+    if (!isOnLoginPage && !isOnRegisterPage) {
       window.location.href = "../login/index.html";
       return;
     }
-    if (logoutBtn) logoutBtn.classList.add("hidden");
-    if (loginBtn) loginBtn.classList.remove("hidden");
+    logoutBtn?.classList.add("hidden");
+    loginBtn?.classList.remove("hidden");
   }
 }
 
-//LOGOUT
+/**
+ * Logs out the current user after confirmation.
+ * Removes user profile and access token from local storage and reloads the page.
+ *
+ * @function logout
+ * @returns {void}
+ */
 export function logout() {
   if (confirm("Are you sure you want to logout?")) {
     // Remove profile and accessToken from localStorage
